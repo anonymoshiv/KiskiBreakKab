@@ -9,10 +9,11 @@ import { CurrentSlotWidget } from '@/components/current-slot-widget'
 import { FreeFriendsList } from '@/components/free-friends-list'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
-import { LogOut, User, Trash2 } from 'lucide-react'
+import { LogOut, User, Trash2, Bell, UserPlus, Users as UsersIcon } from 'lucide-react'
 import { onAuthStateChanged, signOut, deleteUser } from 'firebase/auth'
-import { collection, query, where, getDocs, doc, getDoc, deleteDoc, writeBatch } from 'firebase/firestore'
+import { collection, query, where, getDocs, doc, getDoc, deleteDoc, writeBatch, updateDoc, arrayUnion, onSnapshot } from 'firebase/firestore'
 import { auth, db } from '@/lib/firebase'
 import { toast } from 'sonner'
 
@@ -28,6 +29,9 @@ export default function DashboardPage() {
   const [loadingFriends, setLoadingFriends] = useState(true)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [notifications, setNotifications] = useState<any[]>([])
+  const [notificationCount, setNotificationCount] = useState(0)
+  const [showNotifications, setShowNotifications] = useState(false)
 
   useEffect(() => {
     // Check if user is logged in
@@ -68,6 +72,9 @@ export default function DashboardPage() {
             
             // Load free friends
             await loadFreeFriends(userData.uid)
+            
+            // Load notifications
+            await loadNotifications(userData.uid)
           }
         } catch (error) {
           console.error('Error fetching user data:', error)
@@ -173,6 +180,109 @@ export default function DashboardPage() {
       setLoadingFriends(false)
     }
   }
+
+  const loadNotifications = async (userUid: string) => {
+    try {
+      const notifs: any[] = []
+      
+      // Load friend requests (pending invitations in user's friends subcollection)
+      const friendsRef = collection(db, 'users', userUid, 'friends')
+      const friendsSnapshot = await getDocs(friendsRef)
+      
+      for (const friendDoc of friendsSnapshot.docs) {
+        const friendData = friendDoc.data()
+        if (friendData.status === 'pending' && friendData.requestedBy !== userUid) {
+          // This is a friend request received
+          const requesterDoc = await getDoc(doc(db, 'users', friendData.requestedBy))
+          if (requesterDoc.exists()) {
+            notifs.push({
+              id: friendDoc.id,
+              type: 'friend_request',
+              from: requesterDoc.data().name,
+              fromUid: friendData.requestedBy,
+              timestamp: friendData.timestamp || new Date(),
+              message: `${requesterDoc.data().name} sent you a friend request`
+            })
+          }
+        }
+      }
+      
+      // Load group invitations (groups where user is member but hasn't been notified yet)
+      const groupsQuery = query(
+        collection(db, 'groups'),
+        where('members', 'array-contains', userUid)
+      )
+      const groupsSnapshot = await getDocs(groupsQuery)
+      
+      for (const groupDoc of groupsSnapshot.docs) {
+        const groupData = groupDoc.data()
+        // Check if this is a new group invitation (created in last 24 hours and user is not the owner)
+        if (groupData.ownerId !== userUid) {
+          const createdAt = groupData.createdAt?.toDate() || new Date()
+          const hoursSinceCreated = (new Date().getTime() - createdAt.getTime()) / (1000 * 60 * 60)
+          
+          if (hoursSinceCreated < 24) {
+            const ownerDoc = await getDoc(doc(db, 'users', groupData.ownerId))
+            notifs.push({
+              id: groupDoc.id,
+              type: 'group_invitation',
+              groupName: groupData.name,
+              from: ownerDoc.exists() ? ownerDoc.data().name : 'Someone',
+              fromUid: groupData.ownerId,
+              timestamp: createdAt,
+              message: `${ownerDoc.exists() ? ownerDoc.data().name : 'Someone'} added you to group "${groupData.name}"`
+            })
+          }
+        }
+      }
+      
+      // Sort by timestamp (newest first)
+      notifs.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+      
+      setNotifications(notifs)
+      setNotificationCount(notifs.length)
+    } catch (error) {
+      console.error('Error loading notifications:', error)
+    }
+  }
+
+  const handleAcceptFriendRequest = async (fromUid: string) => {
+    try {
+      // Update both users' friend status to 'accepted'
+      await updateDoc(doc(db, 'users', userUid, 'friends', fromUid), {
+        status: 'accepted'
+      })
+      await updateDoc(doc(db, 'users', fromUid, 'friends', userUid), {
+        status: 'accepted'
+      })
+      
+      toast.success('Friend request accepted!')
+      await loadNotifications(userUid)
+      await loadFreeFriends(userUid, userTimetable)
+    } catch (error) {
+      console.error('Error accepting friend request:', error)
+      toast.error('Failed to accept friend request')
+    }
+  }
+
+  const handleRejectFriendRequest = async (fromUid: string) => {
+    try {
+      // Delete the friend request from both users
+      await deleteDoc(doc(db, 'users', userUid, 'friends', fromUid))
+      await deleteDoc(doc(db, 'users', fromUid, 'friends', userUid))
+      
+      toast.success('Friend request rejected')
+      await loadNotifications(userUid)
+    } catch (error) {
+      console.error('Error rejecting friend request:', error)
+      toast.error('Failed to reject friend request')
+    }
+  }
+
+  const handleDismissNotification = (notificationId: string, type: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== notificationId))
+    setNotificationCount(prev => Math.max(0, prev - 1))
+  }
   
   const timeToMinutes = (timeStr: string): number => {
     const [hours, minutes] = timeStr.split(':').map(Number)
@@ -261,6 +371,101 @@ export default function DashboardPage() {
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
             <ThemeToggle />
+            
+            {/* Notifications */}
+            <Popover open={showNotifications} onOpenChange={setShowNotifications}>
+              <PopoverTrigger asChild>
+                <button className="relative p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                  <Bell className="h-5 w-5 text-slate-700 dark:text-slate-300" />
+                  {notificationCount > 0 && (
+                    <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-gradient-to-r from-red-500 to-pink-500 flex items-center justify-center text-xs font-bold text-white shadow-lg">
+                      {notificationCount > 9 ? '9+' : notificationCount}
+                    </span>
+                  )}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-80 sm:w-96 p-0">
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4">
+                  <h3 className="text-lg font-bold text-white">Notifications</h3>
+                  <p className="text-xs text-blue-100">{notificationCount} new notification{notificationCount !== 1 ? 's' : ''}</p>
+                </div>
+                <div className="max-h-96 overflow-y-auto">
+                  {notifications.length > 0 ? (
+                    <div className="divide-y divide-slate-200 dark:divide-slate-800">
+                      {notifications.map(notif => (
+                        <div key={notif.id} className="p-4 hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors">
+                          {notif.type === 'friend_request' ? (
+                            <div className="space-y-3">
+                              <div className="flex items-start gap-3">
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center flex-shrink-0">
+                                  <UserPlus className="h-5 w-5 text-white" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-semibold text-slate-900 dark:text-white">{notif.from}</p>
+                                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">{notif.message}</p>
+                                  <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">
+                                    {new Date(notif.timestamp).toLocaleString()}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex gap-2">
+                                <Button
+                                  onClick={() => handleAcceptFriendRequest(notif.fromUid)}
+                                  size="sm"
+                                  className="flex-1 h-8 text-xs bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                                >
+                                  Accept
+                                </Button>
+                                <Button
+                                  onClick={() => handleRejectFriendRequest(notif.fromUid)}
+                                  size="sm"
+                                  variant="outline"
+                                  className="flex-1 h-8 text-xs border-red-300 text-red-600 hover:bg-red-50 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-950/30"
+                                >
+                                  Reject
+                                </Button>
+                              </div>
+                            </div>
+                          ) : notif.type === 'group_invitation' ? (
+                            <div className="space-y-2">
+                              <div className="flex items-start gap-3">
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">
+                                  <UsersIcon className="h-5 w-5 text-white" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-semibold text-slate-900 dark:text-white">{notif.from}</p>
+                                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">{notif.message}</p>
+                                  <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">
+                                    {new Date(notif.timestamp).toLocaleString()}
+                                  </p>
+                                </div>
+                              </div>
+                              <Button
+                                onClick={() => handleDismissNotification(notif.id, notif.type)}
+                                size="sm"
+                                variant="ghost"
+                                className="w-full h-8 text-xs"
+                              >
+                                Dismiss
+                              </Button>
+                            </div>
+                          ) : null}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-12 text-center">
+                      <div className="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-3">
+                        <Bell className="h-8 w-8 text-slate-400" />
+                      </div>
+                      <p className="text-sm font-semibold text-slate-900 dark:text-white mb-1">No notifications</p>
+                      <p className="text-xs text-slate-600 dark:text-slate-400">You're all caught up!</p>
+                    </div>
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
+            
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-2 sm:gap-3 px-2 sm:px-4 py-1.5 sm:py-2 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors active:scale-95">
