@@ -42,11 +42,11 @@ export default function RegisterPage() {
     // Validation
     const newErrors: Record<string, string> = {}
     
-    // UID validation (format: 23bcsxxxxx)
+    // UID validation (format: 23bcsxxxxx or 23icsxxxxx)
     if (!formData.uid) {
       newErrors.uid = 'College UID is required'
-    } else if (!/^23bcs\d{5}$/i.test(formData.uid)) {
-      newErrors.uid = 'UID must be in format: 23bcsxxxxx (e.g., 23bcs12345)'
+    } else if (!/^23(bcs|ics)\d{5}$/i.test(formData.uid)) {
+      newErrors.uid = 'UID must be in format: 23bcsxxxxx or 23icsxxxxx (e.g., 23bcs12345, 23ics12345)'
     }
     
     if (!formData.name) newErrors.name = 'Full Name is required'
@@ -190,7 +190,7 @@ export default function RegisterPage() {
                   <Label htmlFor="uid" className="text-sm font-semibold text-slate-700 dark:text-slate-300">College UID</Label>
                   <Input
                     id="uid"
-                    placeholder="e.g., 23bcs12345"
+                    placeholder="e.g., 23bcs12345 or 23ics12345"
                     value={formData.uid}
                     onChange={e => handleChange('uid', e.target.value.toLowerCase())}
                     className={`h-12 rounded-xl border-2 ${errors.uid ? 'border-red-500' : 'border-slate-200 dark:border-slate-700 focus:border-blue-500'}`}
