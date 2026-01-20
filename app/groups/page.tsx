@@ -8,12 +8,13 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Checkbox } from '@/components/ui/checkbox'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { onAuthStateChanged } from 'firebase/auth'
-import { collection, query, where, getDocs, addDoc, deleteDoc, doc, getDoc, updateDoc } from 'firebase/firestore'
+import { collection, query, where, getDocs, addDoc, deleteDoc, doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore'
 import { auth, db } from '@/lib/firebase'
 import { toast } from 'sonner'
-import { ArrowLeft, Users, Search, Plus, Trash2, Crown, UserX } from 'lucide-react'
+import { ArrowLeft, Users, Search, Plus, Trash2, Crown, UserX, UserPlus } from 'lucide-react'
 
 interface Friend {
   uid: string
@@ -55,6 +56,17 @@ export default function GroupsPage() {
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null)
   const [groupMembers, setGroupMembers] = useState<GroupMember[]>([])
   const [loadingMembers, setLoadingMembers] = useState(false)
+  
+  // Add members states
+  const [showAddMembersDialog, setShowAddMembersDialog] = useState(false)
+  const [addMembersGroupId, setAddMembersGroupId] = useState<string | null>(null)
+  const [addMembersSearch, setAddMembersSearch] = useState('')
+  const [selectedNewMembers, setSelectedNewMembers] = useState<string[]>([])
+  const [isAddingMembers, setIsAddingMembers] = useState(false)
+  
+  // Delete confirmation
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [deleteGroupId, setDeleteGroupId] = useState<string | null>(null)
 
   // Check authentication and load data
   useEffect(() => {
@@ -158,18 +170,26 @@ export default function GroupsPage() {
       return
     }
 
-    if (!confirm('Are you sure you want to delete this group? This cannot be undone.')) return
+    setDeleteGroupId(groupId)
+    setShowDeleteDialog(true)
+  }
+
+  const confirmDeleteGroup = async () => {
+    if (!deleteGroupId) return
 
     try {
-      await deleteDoc(doc(db, 'groups', groupId))
+      await deleteDoc(doc(db, 'groups', deleteGroupId))
       toast.success('Group deleted successfully!')
-      setGroups(groups.filter(g => g.id !== groupId))
-      if (selectedGroupId === groupId) {
+      setGroups(groups.filter(g => g.id !== deleteGroupId))
+      if (selectedGroupId === deleteGroupId) {
         setSelectedGroupId(null)
       }
     } catch (error) {
       console.error('Error deleting group:', error)
       toast.error('Failed to delete group')
+    } finally {
+      setShowDeleteDialog(false)
+      setDeleteGroupId(null)
     }
   }
 
@@ -202,6 +222,54 @@ export default function GroupsPage() {
       console.error('Error leaving group:', error)
       toast.error('Failed to leave group')
     }
+  }
+
+  const handleAddMembers = async () => {
+    if (!addMembersGroupId || selectedNewMembers.length === 0) {
+      toast.error('Please select at least one friend to add')
+      return
+    }
+
+    setIsAddingMembers(true)
+    try {
+      const groupRef = doc(db, 'groups', addMembersGroupId)
+      const groupDoc = await getDoc(groupRef)
+      
+      if (groupDoc.exists()) {
+        const currentMembers = groupDoc.data().members || []
+        const membersToAdd = selectedNewMembers.filter(uid => !currentMembers.includes(uid))
+        
+        if (membersToAdd.length === 0) {
+          toast.error('Selected friends are already in the group')
+          setIsAddingMembers(false)
+          return
+        }
+        
+        await updateDoc(groupRef, {
+          members: [...currentMembers, ...membersToAdd]
+        })
+        
+        toast.success(`Added ${membersToAdd.length} member${membersToAdd.length !== 1 ? 's' : ''} successfully!`)
+        await loadGroups(currentUserUid)
+        
+        setShowAddMembersDialog(false)
+        setAddMembersGroupId(null)
+        setSelectedNewMembers([])
+        setAddMembersSearch('')
+      }
+    } catch (error) {
+      console.error('Error adding members:', error)
+      toast.error('Failed to add members')
+    } finally {
+      setIsAddingMembers(false)
+    }
+  }
+
+  const getAvailableFriendsForGroup = (groupId: string) => {
+    const group = groups.find(g => g.id === groupId)
+    if (!group) return []
+    
+    return friends.filter(friend => !group.members.includes(friend.uid))
   }
 
   const loadGroupMembersWithStatus = async (groupId: string) => {
@@ -570,14 +638,28 @@ export default function GroupsPage() {
                           ))}
                         </>
                       )}
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setSelectedGroupId(null)}
-                        className="w-full h-11 rounded-xl border-2 border-slate-300 dark:border-slate-700 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 mt-2"
-                      >
-                        Collapse
-                      </Button>
+                      <div className="flex gap-3 mt-2">
+                        {group.ownerId === currentUserUid && (
+                          <Button
+                            onClick={() => {
+                              setAddMembersGroupId(group.id)
+                              setShowAddMembersDialog(true)
+                            }}
+                            className="flex-1 h-11 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 font-bold shadow-lg shadow-green-500/30"
+                          >
+                            <UserPlus className="h-4 w-4 mr-2" />
+                            Add Members
+                          </Button>
+                        )}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setSelectedGroupId(null)}
+                          className="flex-1 h-11 rounded-xl border-2 border-slate-300 dark:border-slate-700 font-bold hover:bg-slate-100 dark:hover:bg-slate-800"
+                        >
+                          Collapse
+                        </Button>
+                      </div>
                     </div>
                   ) : (
                     // Collapsed view
@@ -607,6 +689,140 @@ export default function GroupsPage() {
           )}
         </div>
       </div>
+
+      {/* Delete Group Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Group?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this group? This action cannot be undone.
+              All members will be removed and the group will be permanently deleted.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteGroupId(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDeleteGroup}
+              className="bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700"
+            >
+              Delete Group
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Add Members Dialog */}
+      <AlertDialog open={showAddMembersDialog} onOpenChange={setShowAddMembersDialog}>
+        <AlertDialogContent className="max-w-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Add Members to Group</AlertDialogTitle>
+            <AlertDialogDescription>
+              Select friends to add to this group
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="space-y-4 py-4">
+            {/* Search Friends */}
+            <div className="relative">
+              <Search className="absolute left-4 top-4 h-4 w-4 text-slate-400" />
+              <Input
+                placeholder="Search by name or UID..."
+                value={addMembersSearch}
+                onChange={e => setAddMembersSearch(e.target.value)}
+                className="pl-11 h-12 rounded-xl border-slate-300 dark:border-slate-700"
+              />
+            </div>
+
+            {/* Available Friends List */}
+            <div className="border border-slate-200 dark:border-slate-800 rounded-xl max-h-80 overflow-y-auto">
+              {(() => {
+                const availableFriends = addMembersGroupId ? getAvailableFriendsForGroup(addMembersGroupId) : []
+                const filteredAvailable = availableFriends.filter(friend =>
+                  friend.uid.toLowerCase().includes(addMembersSearch.toLowerCase()) ||
+                  friend.name.toLowerCase().includes(addMembersSearch.toLowerCase())
+                )
+                
+                return filteredAvailable.length > 0 ? (
+                  <div className="p-2 space-y-1">
+                    {filteredAvailable.map(friend => (
+                      <div
+                        key={friend.uid}
+                        className="flex items-center space-x-3 p-3 rounded-xl hover:bg-gradient-to-br hover:from-green-50 hover:to-emerald-50 dark:hover:from-green-950/30 dark:hover:to-emerald-950/30 cursor-pointer transition-all duration-200"
+                        onClick={() => {
+                          setSelectedNewMembers(prev =>
+                            prev.includes(friend.uid)
+                              ? prev.filter(id => id !== friend.uid)
+                              : [...prev, friend.uid]
+                          )
+                        }}
+                      >
+                        <Checkbox
+                          checked={selectedNewMembers.includes(friend.uid)}
+                          onCheckedChange={() => {
+                            setSelectedNewMembers(prev =>
+                              prev.includes(friend.uid)
+                                ? prev.filter(id => id !== friend.uid)
+                                : [...prev, friend.uid]
+                            )
+                          }}
+                          className="data-[state=checked]:bg-gradient-to-br data-[state=checked]:from-green-600 data-[state=checked]:to-emerald-600 border-2"
+                        />
+                        <Avatar className="h-9 w-9">
+                          <AvatarFallback className="bg-gradient-to-br from-green-600 to-emerald-600 text-white font-bold text-sm">
+                            {friend.name.charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <p className="text-sm font-bold text-slate-900 dark:text-white">{friend.name}</p>
+                          <p className="text-xs text-green-600 dark:text-green-400 font-medium">{friend.uid}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-12 text-center">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center mx-auto mb-3">
+                      <UserPlus className="h-8 w-8 text-slate-400" />
+                    </div>
+                    <p className="text-sm font-semibold text-slate-900 dark:text-white mb-1">
+                      {availableFriends.length === 0 ? 'All friends are already members' : 'No matching friends'}
+                    </p>
+                    <p className="text-xs text-slate-600 dark:text-slate-400">
+                      {availableFriends.length === 0 ? 'Everyone is already in this group!' : 'Try a different search term'}
+                    </p>
+                  </div>
+                )
+              })()}
+            </div>
+            
+            {selectedNewMembers.length > 0 && (
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                {selectedNewMembers.length} friend{selectedNewMembers.length !== 1 ? 's' : ''} selected
+              </p>
+            )}
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel 
+              onClick={() => {
+                setShowAddMembersDialog(false)
+                setAddMembersGroupId(null)
+                setSelectedNewMembers([])
+                setAddMembersSearch('')
+              }}
+              disabled={isAddingMembers}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleAddMembers}
+              disabled={isAddingMembers || selectedNewMembers.length === 0}
+              className="bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700"
+            >
+              {isAddingMembers ? 'Adding...' : `Add ${selectedNewMembers.length} Member${selectedNewMembers.length !== 1 ? 's' : ''}`}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
