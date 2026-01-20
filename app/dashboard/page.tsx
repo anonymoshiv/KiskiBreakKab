@@ -9,9 +9,10 @@ import { CurrentSlotWidget } from '@/components/current-slot-widget'
 import { FreeFriendsList } from '@/components/free-friends-list'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { LogOut, User } from 'lucide-react'
-import { onAuthStateChanged, signOut } from 'firebase/auth'
-import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
+import { LogOut, User, Trash2 } from 'lucide-react'
+import { onAuthStateChanged, signOut, deleteUser } from 'firebase/auth'
+import { collection, query, where, getDocs, doc, getDoc, deleteDoc, writeBatch } from 'firebase/firestore'
 import { auth, db } from '@/lib/firebase'
 import { toast } from 'sonner'
 
@@ -25,6 +26,8 @@ export default function DashboardPage() {
   const [userTimetable, setUserTimetable] = useState<Record<string, Record<number, string>> | null>(null)
   const [freeFriends, setFreeFriends] = useState<any[]>([])
   const [loadingFriends, setLoadingFriends] = useState(true)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
     // Check if user is logged in
@@ -187,6 +190,51 @@ export default function DashboardPage() {
     }
   }
 
+  const handleDeleteAccount = async () => {
+    if (!auth.currentUser || !userUid) return
+
+    setIsDeleting(true)
+    try {
+      // Delete user document and subcollections from Firestore
+      const batch = writeBatch(db)
+      
+      // Delete user's friends subcollection
+      const friendsSnapshot = await getDocs(collection(db, 'users', userUid, 'friends'))
+      friendsSnapshot.forEach((friendDoc) => {
+        batch.delete(friendDoc.ref)
+      })
+      
+      // Delete user's timetable subcollection if exists
+      const timetableRef = doc(db, 'users', userUid, 'timetable', 'schedule')
+      const timetableDoc = await getDoc(timetableRef)
+      if (timetableDoc.exists()) {
+        batch.delete(timetableRef)
+      }
+      
+      // Delete main user document
+      const userDocRef = doc(db, 'users', userUid)
+      batch.delete(userDocRef)
+      
+      // Commit all deletions
+      await batch.commit()
+      
+      // Delete user from Firebase Auth
+      await deleteUser(auth.currentUser)
+      
+      toast.success('Account deleted successfully')
+      router.push('/register')
+    } catch (error: any) {
+      console.error('Delete account error:', error)
+      if (error.code === 'auth/requires-recent-login') {
+        toast.error('Please log out and log back in before deleting your account')
+      } else {
+        toast.error('Failed to delete account. Please try again.')
+      }
+      setIsDeleting(false)
+      setShowDeleteDialog(false)
+    }
+  }
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -230,9 +278,13 @@ export default function DashboardPage() {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout} className="text-red-600 dark:text-red-400 cursor-pointer">
+                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Log out</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} className="text-red-600 dark:text-red-400 cursor-pointer">
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  <span>Delete Account</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -305,6 +357,35 @@ export default function DashboardPage() {
         {/* Friends Free Now */}
         <FreeFriendsList friends={freeFriends} isLoading={loadingFriends} />
       </div>
+
+      {/* Delete Account Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your account
+              and remove all your data from our servers including:
+              <ul className="list-disc list-inside mt-2 space-y-1">
+                <li>Your profile information</li>
+                <li>Your timetable data</li>
+                <li>Your friends list</li>
+                <li>All associated data</li>
+              </ul>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteAccount}
+              disabled={isDeleting}
+              className="bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700"
+            >
+              {isDeleting ? 'Deleting...' : 'Delete Account'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
