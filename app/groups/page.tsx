@@ -13,7 +13,7 @@ import { onAuthStateChanged } from 'firebase/auth'
 import { collection, query, where, getDocs, addDoc, deleteDoc, doc, getDoc, updateDoc } from 'firebase/firestore'
 import { auth, db } from '@/lib/firebase'
 import { toast } from 'sonner'
-import { ArrowLeft, Users, Search, Plus, Trash2 } from 'lucide-react'
+import { ArrowLeft, Users, Search, Plus, Trash2, Crown, UserX } from 'lucide-react'
 
 interface Friend {
   uid: string
@@ -32,6 +32,7 @@ interface Group {
   id: string
   name: string
   createdBy: string
+  ownerId: string // Owner/Admin UID
   members: string[] // Array of UIDs
   createdAt: Date
 }
@@ -131,6 +132,7 @@ export default function GroupsPage() {
       const groupData = {
         name: newGroupName.trim(),
         createdBy: currentUserUid,
+        ownerId: currentUserUid,
         members: [currentUserUid, ...selectedFriends],
         createdAt: new Date()
       }
@@ -150,8 +152,13 @@ export default function GroupsPage() {
     }
   }
 
-  const handleDeleteGroup = async (groupId: string) => {
-    if (!confirm('Are you sure you want to delete this group?')) return
+  const handleDeleteGroup = async (groupId: string, ownerId: string) => {
+    if (currentUserUid !== ownerId) {
+      toast.error('Only the group owner can delete this group')
+      return
+    }
+
+    if (!confirm('Are you sure you want to delete this group? This cannot be undone.')) return
 
     try {
       await deleteDoc(doc(db, 'groups', groupId))
@@ -163,6 +170,37 @@ export default function GroupsPage() {
     } catch (error) {
       console.error('Error deleting group:', error)
       toast.error('Failed to delete group')
+    }
+  }
+
+  const handleLeaveGroup = async (groupId: string, ownerId: string) => {
+    if (currentUserUid === ownerId) {
+      toast.error('You are the owner. Delete the group instead of leaving it.')
+      return
+    }
+
+    if (!confirm('Are you sure you want to leave this group?')) return
+
+    try {
+      const groupRef = doc(db, 'groups', groupId)
+      const groupDoc = await getDoc(groupRef)
+      if (groupDoc.exists()) {
+        const currentMembers = groupDoc.data().members || []
+        const updatedMembers = currentMembers.filter((uid: string) => uid !== currentUserUid)
+        
+        await updateDoc(groupRef, {
+          members: updatedMembers
+        })
+        
+        toast.success('Left group successfully!')
+        setGroups(groups.filter(g => g.id !== groupId))
+        if (selectedGroupId === groupId) {
+          setSelectedGroupId(null)
+        }
+      }
+    } catch (error) {
+      console.error('Error leaving group:', error)
+      toast.error('Failed to leave group')
     }
   }
 
@@ -436,19 +474,38 @@ export default function GroupsPage() {
                       <div className="flex items-center gap-2 mb-1">
                         <Users className="h-5 w-5 text-white" />
                         <h3 className="text-xl font-black text-white">{group.name}</h3>
+                        {group.ownerId === currentUserUid && (
+                          <div className="px-2 py-1 rounded-full bg-yellow-400/20 border border-yellow-300/30 flex items-center gap-1">
+                            <Crown className="h-3 w-3 text-yellow-300" />
+                            <span className="text-xs font-bold text-yellow-200">Owner</span>
+                          </div>
+                        )}
                       </div>
                       <p className="text-blue-100 text-sm">
                         {group.members.length} member{group.members.length !== 1 ? 's' : ''}
                       </p>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDeleteGroup(group.id)}
-                      className="text-white hover:bg-white/20 rounded-xl"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    {group.ownerId === currentUserUid ? (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteGroup(group.id, group.ownerId)}
+                        className="text-white hover:bg-white/20 rounded-xl"
+                        title="Delete Group"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleLeaveGroup(group.id, group.ownerId)}
+                        className="text-white hover:bg-white/20 rounded-xl"
+                        title="Leave Group"
+                      >
+                        <UserX className="h-4 w-4" />
+                      </Button>
+                    )}
                   </div>
                 </div>
                 <div className="p-6">
@@ -476,7 +533,15 @@ export default function GroupsPage() {
                                   </AvatarFallback>
                                 </Avatar>
                                 <div>
-                                  <p className="font-bold text-slate-900 dark:text-white">{member.name}</p>
+                                  <div className="flex items-center gap-2">
+                                    <p className="font-bold text-slate-900 dark:text-white">{member.name}</p>
+                                    {member.uid === group.ownerId && (
+                                      <div className="px-2 py-0.5 rounded-full bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-300 dark:border-yellow-700 flex items-center gap-1">
+                                        <Crown className="h-3 w-3 text-yellow-600 dark:text-yellow-500" />
+                                        <span className="text-xs font-bold text-yellow-700 dark:text-yellow-400">Owner</span>
+                                      </div>
+                                    )}
+                                  </div>
                                   <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">{member.uid}</p>
                                 </div>
                               </div>
