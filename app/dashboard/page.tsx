@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CurrentSlotWidget } from '@/components/current-slot-widget'
 import { FreeFriendsList } from '@/components/free-friends-list'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { LogOut, User } from 'lucide-react'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore'
 import { auth, db } from '@/lib/firebase'
@@ -211,15 +213,29 @@ export default function DashboardPage() {
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
             <ThemeToggle />
-            <button 
-              onClick={handleLogout}
-              className="flex items-center gap-2 sm:gap-3 px-2 sm:px-4 py-1.5 sm:py-2 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors active:scale-95"
-            >
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center font-bold text-white text-xs sm:text-sm shadow-lg">
-                {userName.charAt(0).toUpperCase()}
-              </div>
-              <span className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 hidden sm:inline">{userName.split(' ')[0]}</span>
-            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-2 sm:gap-3 px-2 sm:px-4 py-1.5 sm:py-2 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors active:scale-95">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center font-bold text-white text-xs sm:text-sm shadow-lg">
+                    {userName.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 hidden sm:inline">{userName.split(' ')[0]}</span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{userName}</p>
+                    <p className="text-xs leading-none text-muted-foreground">{userUid}</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout} className="text-red-600 dark:text-red-400 cursor-pointer">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
