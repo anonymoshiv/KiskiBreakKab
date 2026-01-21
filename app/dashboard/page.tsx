@@ -13,9 +13,10 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { LogOut, User, Trash2, Bell, UserPlus, Users as UsersIcon } from 'lucide-react'
 import { onAuthStateChanged, signOut, deleteUser } from 'firebase/auth'
-import { collection, query, where, getDocs, doc, getDoc, deleteDoc, writeBatch, updateDoc, arrayUnion, onSnapshot } from 'firebase/firestore'
+import { collection, query, where, getDocs, doc, getDoc, deleteDoc, writeBatch, updateDoc, arrayUnion, onSnapshot, Unsubscribe } from 'firebase/firestore'
 import { auth, db } from '@/lib/firebase'
 import { toast } from 'sonner'
+import { acceptFriendRequest, rejectFriendRequest, getPendingRequests } from '@/lib/friends'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -34,8 +35,10 @@ export default function DashboardPage() {
   const [showNotifications, setShowNotifications] = useState(false)
 
   useEffect(() => {
+    let notificationUnsubscribe: Unsubscribe | null = null
+
     // Check if user is logged in
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    const authUnsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
         // Not logged in, redirect to login
         router.push('/login')
@@ -73,8 +76,16 @@ export default function DashboardPage() {
             // Load free friends
             await loadFreeFriends(userData.uid)
             
-            // Load notifications
-            await loadNotifications(userData.uid)
+            // Set up real-time listener for friend requests
+            const friendRequestsQuery = query(
+              collection(db, 'friendRequests'),
+              where('to', '==', userData.uid),
+              where('status', '==', 'pending')
+            )
+            
+            notificationUnsubscribe = onSnapshot(friendRequestsQuery, async (snapshot) => {
+              await loadNotifications(userData.uid)
+            })
           }
         } catch (error) {
           console.error('Error fetching user data:', error)
@@ -83,7 +94,12 @@ export default function DashboardPage() {
       }
     })
 
-    return () => unsubscribe()
+    return () => {
+      authUnsubscribe()
+      if (notificationUnsubscribe) {
+        notificationUnsubscribe()
+      }
+    }
   }, [router])
 
   const loadFreeFriends = async (currentUserUid: string) => {
@@ -185,26 +201,18 @@ export default function DashboardPage() {
     try {
       const notifs: any[] = []
       
-      // Load friend requests (pending invitations in user's friends subcollection)
-      const friendsRef = collection(db, 'users', userUid, 'friends')
-      const friendsSnapshot = await getDocs(friendsRef)
+      // Load friend requests from friendRequests collection
+      const pendingRequests = await getPendingRequests(userUid)
       
-      for (const friendDoc of friendsSnapshot.docs) {
-        const friendData = friendDoc.data()
-        if (friendData.status === 'pending' && friendData.requestedBy !== userUid) {
-          // This is a friend request received
-          const requesterDoc = await getDoc(doc(db, 'users', friendData.requestedBy))
-          if (requesterDoc.exists()) {
-            notifs.push({
-              id: friendDoc.id,
-              type: 'friend_request',
-              from: requesterDoc.data().name,
-              fromUid: friendData.requestedBy,
-              timestamp: friendData.timestamp || new Date(),
-              message: `${requesterDoc.data().name} sent you a friend request`
-            })
-          }
-        }
+      for (const request of pendingRequests) {
+        notifs.push({
+          id: request.id,
+          type: 'friend_request',
+          from: request.fromName,
+          fromUid: request.from,
+          timestamp: request.createdAt?.toDate?.() || new Date(),
+          message: `${request.fromName} sent you a friend request`
+        })
       }
       
       // Load group invitations (groups where user is member but hasn't been notified yet)
@@ -237,7 +245,11 @@ export default function DashboardPage() {
       }
       
       // Sort by timestamp (newest first)
-      notifs.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+      notifs.sort((a, b) => {
+        const aTime = a.timestamp instanceof Date ? a.timestamp.getTime() : new Date(a.timestamp).getTime()
+        const bTime = b.timestamp instanceof Date ? b.timestamp.getTime() : new Date(b.timestamp).getTime()
+        return bTime - aTime
+      })
       
       setNotifications(notifs)
       setNotificationCount(notifs.length)
@@ -246,36 +258,32 @@ export default function DashboardPage() {
     }
   }
 
-  const handleAcceptFriendRequest = async (fromUid: string) => {
+  const handleAcceptFriendRequest = async (requestId: string) => {
     try {
-      // Update both users' friend status to 'accepted'
-      await updateDoc(doc(db, 'users', userUid, 'friends', fromUid), {
-        status: 'accepted'
-      })
-      await updateDoc(doc(db, 'users', fromUid, 'friends', userUid), {
-        status: 'accepted'
-      })
-      
+      await acceptFriendRequest(requestId, userUid)
       toast.success('Friend request accepted!')
+      
+      // Reload data
       await loadNotifications(userUid)
-      await loadFreeFriends(userUid, userTimetable)
-    } catch (error) {
+      await loadFreeFriends(userUid)
+      
+      // Update friends count
+      const friendsSnapshot = await getDocs(collection(db, 'users', userUid, 'friends'))
+      setFriendsCount(friendsSnapshot.size)
+    } catch (error: any) {
       console.error('Error accepting friend request:', error)
-      toast.error('Failed to accept friend request')
+      toast.error(error.message || 'Failed to accept friend request')
     }
   }
 
-  const handleRejectFriendRequest = async (fromUid: string) => {
+  const handleRejectFriendRequest = async (requestId: string) => {
     try {
-      // Delete the friend request from both users
-      await deleteDoc(doc(db, 'users', userUid, 'friends', fromUid))
-      await deleteDoc(doc(db, 'users', fromUid, 'friends', userUid))
-      
+      await rejectFriendRequest(requestId)
       toast.success('Friend request rejected')
       await loadNotifications(userUid)
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error rejecting friend request:', error)
-      toast.error('Failed to reject friend request')
+      toast.error(error.message || 'Failed to reject friend request')
     }
   }
 
@@ -410,14 +418,14 @@ export default function DashboardPage() {
                               </div>
                               <div className="flex gap-2">
                                 <Button
-                                  onClick={() => handleAcceptFriendRequest(notif.fromUid)}
+                                  onClick={() => handleAcceptFriendRequest(notif.id)}
                                   size="sm"
                                   className="flex-1 h-8 text-xs bg-green-600 hover:bg-green-700"
                                 >
                                   Accept
                                 </Button>
                                 <Button
-                                  onClick={() => handleRejectFriendRequest(notif.fromUid)}
+                                  onClick={() => handleRejectFriendRequest(notif.id)}
                                   size="sm"
                                   variant="outline"
                                   className="flex-1 h-8 text-xs border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-900/30"
