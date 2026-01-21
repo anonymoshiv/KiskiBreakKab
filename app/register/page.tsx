@@ -97,7 +97,7 @@ export default function RegisterPage() {
 
       toast.success('Account created successfully!')
       
-      // Clear form and redirect to login page
+      // Clear form and redirect to dashboard
       setFormData({
         uid: '',
         name: '',
@@ -128,14 +128,14 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+    <div className="min-h-screen bg-white dark:bg-black">
       <div className="grid lg:grid-cols-2 min-h-screen">
         {/* Left Side - Branding */}
-        <div className="hidden lg:flex flex-col justify-center items-center p-12 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 relative overflow-hidden">
+        <div className="hidden lg:flex flex-col justify-center items-center p-12 bg-[#F63049] relative overflow-hidden">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
           <div className="relative z-10 text-center space-y-6">
-            <div className="w-20 h-20 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mx-auto shadow-2xl">
-              <span className="text-white text-4xl font-black">K</span>
+            <div className="w-20 h-20 rounded-2xl bg-white flex items-center justify-center mx-auto shadow-2xl">
+              <span className="text-[#F63049] text-4xl font-black">K</span>
             </div>
             <h1 className="text-5xl font-black text-white">Join KiskiBreakKab</h1>
             <p className="text-xl text-blue-100 max-w-md">Start finding your free friends and make the most of your break time</p>
@@ -167,10 +167,10 @@ export default function RegisterPage() {
                 <ThemeToggle />
               </div>
               <div className="inline-flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                <div className="w-12 h-12 rounded-xl bg-[#F63049] flex items-center justify-center shadow-lg">
                   <span className="text-white text-xl font-bold">K</span>
                 </div>
-                <h1 className="text-2xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                <h1 className="text-2xl font-black text-[#F63049]">
                   KiskiBreakKab
                 </h1>
               </div>
@@ -178,56 +178,56 @@ export default function RegisterPage() {
 
             {/* Header */}
             <div className="space-y-2">
-              <h2 className="text-3xl font-black text-slate-900 dark:text-white">Create Account</h2>
-              <p className="text-slate-600 dark:text-slate-400">Sign up to start finding your free friends</p>
+              <h2 className="text-3xl font-black text-black dark:text-white">Create Account</h2>
+              <p className="text-gray-600 dark:text-gray-400">Sign up to start finding your free friends</p>
             </div>
 
             {/* Form */}
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none p-8">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-xl p-8">
               <form onSubmit={handleSubmit} className="space-y-5">
                 {/* College UID */}
                 <div className="space-y-2">
-                  <Label htmlFor="uid" className="text-sm font-semibold text-slate-700 dark:text-slate-300">College UID</Label>
+                  <Label htmlFor="uid" className="text-sm font-semibold text-gray-700 dark:text-gray-300">College UID</Label>
                   <Input
                     id="uid"
                     placeholder="e.g., 23bcs12345 or 23ics12345"
                     value={formData.uid}
                     onChange={e => handleChange('uid', e.target.value.toLowerCase())}
-                    className={`h-12 rounded-xl border-2 ${errors.uid ? 'border-red-500' : 'border-slate-200 dark:border-slate-700 focus:border-blue-500'}`}
+                    className={`h-12 rounded-xl border-2 ${errors.uid ? 'border-red-500' : 'border-gray-200 dark:border-gray-700 focus:border-[#F63049]'}`}
                   />
                   {errors.uid && <p className="text-sm text-red-500 font-medium">{errors.uid}</p>}
                 </div>
 
                 {/* Full Name */}
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Full Name</Label>
+                  <Label htmlFor="name" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Full Name</Label>
                   <Input
                     id="name"
                     placeholder="Enter your full name"
                     value={formData.name}
                     onChange={e => handleChange('name', e.target.value)}
-                    className={`h-12 rounded-xl border-2 ${errors.name ? 'border-red-500' : 'border-slate-200 dark:border-slate-700 focus:border-blue-500'}`}
+                    className={`h-12 rounded-xl border-2 ${errors.name ? 'border-red-500' : 'border-gray-200 dark:border-gray-700 focus:border-[#F63049]'}`}
                   />
                   {errors.name && <p className="text-sm text-red-500 font-medium">{errors.name}</p>}
                 </div>
 
                 {/* Email */}
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Email</Label>
+                  <Label htmlFor="email" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Email</Label>
                   <Input
                     id="email"
                     type="email"
                     placeholder="your.email@example.com"
                     value={formData.email}
                     onChange={e => handleChange('email', e.target.value)}
-                    className={`h-12 rounded-xl border-2 ${errors.email ? 'border-red-500' : 'border-slate-200 dark:border-slate-700 focus:border-blue-500'}`}
+                    className={`h-12 rounded-xl border-2 ${errors.email ? 'border-red-500' : 'border-gray-200 dark:border-gray-700 focus:border-[#F63049]'}`}
                   />
                   {errors.email && <p className="text-sm text-red-500 font-medium">{errors.email}</p>}
                 </div>
 
                 {/* Password */}
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Password</Label>
+                  <Label htmlFor="password" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Password</Label>
                   <div className="relative">
                     <Input
                       id="password"
@@ -235,12 +235,12 @@ export default function RegisterPage() {
                       placeholder="Create a password (min 6 characters)"
                       value={formData.password}
                       onChange={e => handleChange('password', e.target.value)}
-                      className={`h-12 rounded-xl border-2 pr-12 ${errors.password ? 'border-red-500' : 'border-slate-200 dark:border-slate-700 focus:border-blue-500'}`}
+                      className={`h-12 rounded-xl border-2 pr-12 ${errors.password ? 'border-red-500' : 'border-gray-200 dark:border-gray-700 focus:border-[#F63049]'}`}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                     >
                       {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                     </button>
@@ -250,7 +250,7 @@ export default function RegisterPage() {
 
                 {/* Confirm Password */}
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Confirm Password</Label>
+                  <Label htmlFor="confirmPassword" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Confirm Password</Label>
                   <div className="relative">
                     <Input
                       id="confirmPassword"
@@ -258,12 +258,12 @@ export default function RegisterPage() {
                       placeholder="Re-enter your password"
                       value={formData.confirmPassword}
                       onChange={e => handleChange('confirmPassword', e.target.value)}
-                      className={`h-12 rounded-xl border-2 pr-12 ${errors.confirmPassword ? 'border-red-500' : 'border-slate-200 dark:border-slate-700 focus:border-blue-500'}`}
+                      className={`h-12 rounded-xl border-2 pr-12 ${errors.confirmPassword ? 'border-red-500' : 'border-gray-200 dark:border-gray-700 focus:border-[#F63049]'}`}
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                     >
                       {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                     </button>
@@ -280,7 +280,7 @@ export default function RegisterPage() {
                 <Button 
                   type="submit" 
                   disabled={isLoading} 
-                  className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 font-bold text-base shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all duration-300"
+                  className="w-full h-12 rounded-xl bg-[#F63049] hover:bg-[#d42a3f] text-white font-bold text-base shadow-lg transition-all duration-300"
                 >
                   {isLoading ? 'Creating account...' : 'Register'}
                 </Button>
@@ -289,8 +289,8 @@ export default function RegisterPage() {
 
             {/* Login Link */}
             <div className="text-center">
-              <span className="text-slate-600 dark:text-slate-400">Already have an account? </span>
-              <Link href="/login" className="font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
+              <span className="text-gray-600 dark:text-gray-400">Already have an account? </span>
+              <Link href="/login" className="font-bold text-[#F63049] hover:text-[#d42a3f]">
                 Login here
               </Link>
             </div>

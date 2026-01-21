@@ -81,13 +81,13 @@ export default function TimetablePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-3 sm:p-4">
+    <div className="min-h-screen bg-white dark:bg-black p-3 sm:p-4">
       <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
         {/* Header */}
         <div className="space-y-3">
           <div className="flex justify-between items-start">
             <Link href="/dashboard">
-              <Button variant="ghost" size="sm" className="mb-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-xs sm:text-sm">
+              <Button variant="ghost" size="sm" className="mb-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl text-xs sm:text-sm">
                 <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                 <span className="hidden sm:inline">Back to Dashboard</span>
                 <span className="sm:hidden">Back</span>
@@ -96,7 +96,7 @@ export default function TimetablePage() {
             <ThemeToggle />
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-[#F63049] flex items-center justify-center shadow-lg">
               <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
             </div>
             <div>

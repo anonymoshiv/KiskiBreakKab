@@ -6,27 +6,27 @@ import { ThemeToggle } from '@/components/theme-toggle'
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+    <div className="min-h-screen bg-f63049 dark:bg-black">
       {/* Header */}
-      <nav className="border-b border-slate-200/50 dark:border-slate-800/50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl">
+      <nav className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-[#F63049] flex items-center justify-center">
               <span className="text-white text-base sm:text-lg font-bold">K</span>
             </div>
-            <h1 className="text-base sm:text-xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <h1 className="text-base sm:text-xl font-bold text-black dark:text-white">
               KiskiBreakKab
             </h1>
           </div>
           <div className="flex gap-2 sm:gap-3 items-center">
             <ThemeToggle />
             <Link href="/login" className="hidden sm:inline-block">
-              <Button variant="ghost" size="sm" className="rounded-full font-medium">
+              <Button variant="ghost" size="sm" className="font-medium hover:shadow-[0_0_15px_rgba(246,48,73,0.5)] transition-shadow">
                 Login
               </Button>
             </Link>
             <Link href="/register">
-              <Button size="sm" className="rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg shadow-blue-500/30 font-medium text-xs sm:text-sm px-3 sm:px-4">
+              <Button size="sm" className="bg-[#F63049] text-white hover:bg-white hover:text-[#F63049] font-medium text-xs sm:text-sm px-3 sm:px-4 transition-colors">
                 Get Started
               </Button>
             </Link>
@@ -36,64 +36,64 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-20 text-center">
-        <div className="inline-block mb-4 sm:mb-6 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-950 dark:to-purple-950 border border-blue-200 dark:border-blue-800">
-          <span className="text-xs sm:text-sm font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        <div className="inline-block mb-4 sm:mb-6 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[#F63049]/10 border border-[#F63049]/30">
+          <span className="text-xs sm:text-sm font-semibold text-[#F63049]">
             ✨ Find Free Friends Instantly
           </span>
         </div>
         
-        <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white mb-4 sm:mb-6 leading-tight px-2">
+        <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-black dark:text-white mb-4 sm:mb-6 leading-tight px-2">
           Never Miss a<br />
-          <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+          <span className="text-[#F63049]">
             Break Together
           </span>
         </h2>
         
-        <p className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-8 sm:mb-12 leading-relaxed px-4">
+        <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-8 sm:mb-12 leading-relaxed px-4">
           Know exactly which friends are free during lecture breaks. Set your timetable once, and let KiskiBreakKab do the rest.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-12 sm:mb-16 md:mb-20 px-4">
           <Link href="/register">
-            <Button size="lg" className="rounded-full px-8 py-6 text-base font-bold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-2xl shadow-blue-500/40 hover:shadow-blue-500/60 transition-all duration-300 hover:scale-105">
-              Start for Free →
+            <Button size="lg" className="px-8 py-6 text-base font-semibold bg-[#F63049] text-white hover:bg-white hover:text-[#F63049] transition-colors">
+              Get Started →
             </Button>
           </Link>
           <Link href="/login">
-            <Button variant="outline" size="lg" className="rounded-full px-8 py-6 text-base font-bold border-2 hover:bg-slate-100 dark:hover:bg-slate-800">
-              Sign In
+            <Button variant="outline" size="lg" className="px-8 py-6 text-base font-semibold border-2 border-black dark:border-white hover:bg-black hover:text-white hover:border-black dark:hover:bg-white dark:hover:text-black dark:hover:border-white transition-colors">
+              Login
             </Button>
           </Link>
         </div>
 
         {/* Features Grid */}
         <div className="grid md:grid-cols-3 gap-6 mt-20">
-          <div className="p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-300 hover:scale-105 group">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-6 shadow-lg shadow-blue-500/30 group-hover:shadow-blue-500/50 transition-all">
+          <div className="p-8 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-[#F63049] dark:hover:border-[#F63049] transition-colors">
+            <div className="w-14 h-14 rounded-lg bg-[#F63049]/10 flex items-center justify-center mb-6">
               <span className="text-3xl">⚡</span>
             </div>
-            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-3">Real-Time Updates</h3>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+            <h3 className="text-xl font-bold text-black dark:text-white mb-3">Real-Time Updates</h3>
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
               See who's free right now. Updates automatically based on everyone's timetable.
             </p>
           </div>
 
-          <div className="p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 hover:scale-105 group">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center mb-6 shadow-lg shadow-purple-500/30 group-hover:shadow-purple-500/50 transition-all">
+          <div className="p-8 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-[#F63049] dark:hover:border-[#F63049] transition-colors">
+            <div className="w-14 h-14 rounded-lg bg-[#F63049]/10 flex items-center justify-center mb-6">
               <span className="text-3xl">👥</span>
             </div>
-            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-3">Smart Groups</h3>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+            <h3 className="text-xl font-bold text-black dark:text-white mb-3">Smart Groups</h3>
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
               Create groups and instantly see which members are available for hangouts.
             </p>
           </div>
 
-          <div className="p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none hover:shadow-2xl hover:shadow-pink-500/20 transition-all duration-300 hover:scale-105 group">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center mb-6 shadow-lg shadow-pink-500/30 group-hover:shadow-pink-500/50 transition-all">
+          <div className="p-8 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-[#F63049] dark:hover:border-[#F63049] transition-colors">
+            <div className="w-14 h-14 rounded-lg bg-[#F63049]/10 flex items-center justify-center mb-6">
               <span className="text-3xl">🎯</span>
             </div>
-            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-3">Set & Forget</h3>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+            <h3 className="text-xl font-bold text-black dark:text-white mb-3">Set & Forget</h3>
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
               Set your timetable once. We'll automatically match your breaks with friends.
             </p>
           </div>
@@ -101,10 +101,10 @@ export default function HomePage() {
       </div>
 
       {/* Footer */}
-      <div className="border-t border-slate-200 dark:border-slate-800 mt-20">
+      <div className="border-t border-gray-200 dark:border-gray-800 mt-20">
         <div className="max-w-7xl mx-auto px-6 py-8 text-center">
-          <p className="text-sm text-slate-600 dark:text-slate-400">
-            Made for college students who value their break time 💙
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Made for college students who value their break time ❤️
           </p>
         </div>
       </div>

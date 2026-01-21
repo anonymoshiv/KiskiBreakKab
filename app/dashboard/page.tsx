@@ -354,19 +354,19 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+    <div className="min-h-screen bg-white dark:bg-black">
       {/* Header */}
-      <div className="sticky top-0 z-50 border-b border-slate-200/50 dark:border-slate-800/50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl">
+      <div className="sticky top-0 z-50 border-b border-gray-200/50 dark:border-gray-800/50 bg-white/80 dark:bg-black/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-5 flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-[#F63049] flex items-center justify-center shadow-lg shadow-[#F63049]/30">
               <span className="text-white text-base sm:text-lg font-bold">K</span>
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-lg sm:text-xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <h1 className="text-lg sm:text-xl font-black text-[#F63049] dark:text-[#F63049]">
                 KiskiBreakKab
               </h1>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Find free friends instantly</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Find free friends instantly</p>
             </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
@@ -375,35 +375,35 @@ export default function DashboardPage() {
             {/* Notifications */}
             <Popover open={showNotifications} onOpenChange={setShowNotifications}>
               <PopoverTrigger asChild>
-                <button className="relative p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                  <Bell className="h-5 w-5 text-slate-700 dark:text-slate-300" />
+                <button className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                  <Bell className="h-5 w-5 text-gray-700 dark:text-gray-300" />
                   {notificationCount > 0 && (
-                    <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-gradient-to-r from-red-500 to-pink-500 flex items-center justify-center text-xs font-bold text-white shadow-lg">
+                    <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-[#F63049] flex items-center justify-center text-xs font-bold text-white shadow-lg">
                       {notificationCount > 9 ? '9+' : notificationCount}
                     </span>
                   )}
                 </button>
               </PopoverTrigger>
               <PopoverContent align="end" className="w-80 sm:w-96 p-0">
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4">
+                <div className="bg-[#F63049] p-4">
                   <h3 className="text-lg font-bold text-white">Notifications</h3>
-                  <p className="text-xs text-blue-100">{notificationCount} new notification{notificationCount !== 1 ? 's' : ''}</p>
+                  <p className="text-xs text-white/80">{notificationCount} new notification{notificationCount !== 1 ? 's' : ''}</p>
                 </div>
                 <div className="max-h-96 overflow-y-auto">
                   {notifications.length > 0 ? (
-                    <div className="divide-y divide-slate-200 dark:divide-slate-800">
+                    <div className="divide-y divide-gray-200 dark:divide-gray-800">
                       {notifications.map(notif => (
-                        <div key={notif.id} className="p-4 hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors">
+                        <div key={notif.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors">
                           {notif.type === 'friend_request' ? (
                             <div className="space-y-3">
                               <div className="flex items-start gap-3">
-                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center flex-shrink-0">
+                                <div className="w-10 h-10 rounded-full bg-[#F63049] flex items-center justify-center flex-shrink-0">
                                   <UserPlus className="h-5 w-5 text-white" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-semibold text-slate-900 dark:text-white">{notif.from}</p>
-                                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">{notif.message}</p>
-                                  <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">
+                                  <p className="text-sm font-semibold text-gray-900 dark:text-white">{notif.from}</p>
+                                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{notif.message}</p>
+                                  <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
                                     {new Date(notif.timestamp).toLocaleString()}
                                   </p>
                                 </div>
@@ -412,7 +412,7 @@ export default function DashboardPage() {
                                 <Button
                                   onClick={() => handleAcceptFriendRequest(notif.fromUid)}
                                   size="sm"
-                                  className="flex-1 h-8 text-xs bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                                  className="flex-1 h-8 text-xs bg-green-600 hover:bg-green-700"
                                 >
                                   Accept
                                 </Button>
@@ -420,7 +420,7 @@ export default function DashboardPage() {
                                   onClick={() => handleRejectFriendRequest(notif.fromUid)}
                                   size="sm"
                                   variant="outline"
-                                  className="flex-1 h-8 text-xs border-red-300 text-red-600 hover:bg-red-50 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-950/30"
+                                  className="flex-1 h-8 text-xs border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-900/30"
                                 >
                                   Reject
                                 </Button>
@@ -429,13 +429,13 @@ export default function DashboardPage() {
                           ) : notif.type === 'group_invitation' ? (
                             <div className="space-y-2">
                               <div className="flex items-start gap-3">
-                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">
+                                <div className="w-10 h-10 rounded-full bg-[#F63049] flex items-center justify-center flex-shrink-0">
                                   <UsersIcon className="h-5 w-5 text-white" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-semibold text-slate-900 dark:text-white">{notif.from}</p>
-                                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">{notif.message}</p>
-                                  <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">
+                                  <p className="text-sm font-semibold text-gray-900 dark:text-white">{notif.from}</p>
+                                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{notif.message}</p>
+                                  <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
                                     {new Date(notif.timestamp).toLocaleString()}
                                   </p>
                                 </div>
@@ -455,11 +455,11 @@ export default function DashboardPage() {
                     </div>
                   ) : (
                     <div className="p-12 text-center">
-                      <div className="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-3">
-                        <Bell className="h-8 w-8 text-slate-400" />
+                      <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-3">
+                        <Bell className="h-8 w-8 text-gray-400" />
                       </div>
-                      <p className="text-sm font-semibold text-slate-900 dark:text-white mb-1">No notifications</p>
-                      <p className="text-xs text-slate-600 dark:text-slate-400">You're all caught up!</p>
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white mb-1">No notifications</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">You're all caught up!</p>
                     </div>
                   )}
                 </div>
@@ -468,11 +468,11 @@ export default function DashboardPage() {
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 sm:gap-3 px-2 sm:px-4 py-1.5 sm:py-2 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors active:scale-95">
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center font-bold text-white text-xs sm:text-sm shadow-lg">
+                <button className="flex items-center gap-2 sm:gap-3 px-2 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors active:scale-95">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#F63049] flex items-center justify-center font-bold text-white text-xs sm:text-sm shadow-lg">
                     {userName.charAt(0).toUpperCase()}
                   </div>
-                  <span className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 hidden sm:inline">{userName.split(' ')[0]}</span>
+                  <span className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 hidden sm:inline">{userName.split(' ')[0]}</span>
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
@@ -500,11 +500,11 @@ export default function DashboardPage() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 md:py-8 space-y-4 sm:space-y-6 md:space-y-8">
         {/* Welcome Card */}
-        <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 p-6 sm:p-8 shadow-2xl shadow-blue-500/30">
+        <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-[#F63049] p-6 sm:p-8 shadow-2xl shadow-[#F63049]/30">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
           <div className="relative z-10">
             <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white mb-1 sm:mb-2">Welcome back, {userName}! 👋</h2>
-            <p className="text-blue-100 text-sm sm:text-base md:text-lg">Check who's free during breaks and plan hangouts instantly</p>
+            <p className="text-white/80 text-sm sm:text-base md:text-lg">Check who's free during breaks and plan hangouts instantly</p>
           </div>
         </div>
 
@@ -517,42 +517,42 @@ export default function DashboardPage() {
 
           {/* Right Column - Quick Actions */}
           <div className="space-y-6">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-lg shadow-slate-200/50 dark:shadow-none overflow-hidden">
-              <div className="p-6 border-b border-slate-200 dark:border-slate-800">
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Quick Actions</h3>
+            <div className="bg-white dark:bg-black rounded-2xl border border-gray-200 dark:border-gray-800 shadow-lg dark:shadow-none overflow-hidden">
+              <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Quick Actions</h3>
               </div>
               <div className="p-4 space-y-2">
                 <Link href="/timetable" className="block">
-                  <button className="w-full text-left px-4 py-3 rounded-xl bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 border border-blue-200 dark:border-blue-800 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-200 hover:scale-[1.02] group">
-                    <span className="text-sm font-semibold text-blue-700 dark:text-blue-300 group-hover:text-blue-800 dark:group-hover:text-blue-200">📅 Edit Timetable</span>
+                  <button className="w-full text-left px-4 py-3 rounded-xl bg-[#F63049]/10 dark:bg-[#F63049]/20 border border-[#F63049]/30 dark:border-[#F63049]/40 hover:shadow-lg hover:shadow-[#F63049]/20 transition-all duration-200 hover:scale-[1.02] group">
+                    <span className="text-sm font-semibold text-[#F63049] dark:text-[#F63049] group-hover:text-[#F63049]/80 dark:group-hover:text-[#F63049]/90">📅 Edit Timetable</span>
                   </button>
                 </Link>
                 <Link href="/friends" className="block">
-                  <button className="w-full text-left px-4 py-3 rounded-xl bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900 border border-purple-200 dark:border-purple-800 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-200 hover:scale-[1.02] group">
-                    <span className="text-sm font-semibold text-purple-700 dark:text-purple-300 group-hover:text-purple-800 dark:group-hover:text-purple-200">👥 Manage Friends</span>
+                  <button className="w-full text-left px-4 py-3 rounded-xl bg-[#F63049]/10 dark:bg-[#F63049]/20 border border-[#F63049]/30 dark:border-[#F63049]/40 hover:shadow-lg hover:shadow-[#F63049]/20 transition-all duration-200 hover:scale-[1.02] group">
+                    <span className="text-sm font-semibold text-[#F63049] dark:text-[#F63049] group-hover:text-[#F63049]/80 dark:group-hover:text-[#F63049]/90">👥 Manage Friends</span>
                   </button>
                 </Link>
                 <Link href="/groups" className="block">
-                  <button className="w-full text-left px-4 py-3 rounded-xl bg-gradient-to-r from-pink-50 to-pink-100 dark:from-pink-950 dark:to-pink-900 border border-pink-200 dark:border-pink-800 hover:shadow-lg hover:shadow-pink-500/20 transition-all duration-200 hover:scale-[1.02] group">
-                    <span className="text-sm font-semibold text-pink-700 dark:text-pink-300 group-hover:text-pink-800 dark:group-hover:text-pink-200">🎯 Manage Groups</span>
+                  <button className="w-full text-left px-4 py-3 rounded-xl bg-[#F63049]/10 dark:bg-[#F63049]/20 border border-[#F63049]/30 dark:border-[#F63049]/40 hover:shadow-lg hover:shadow-[#F63049]/20 transition-all duration-200 hover:scale-[1.02] group">
+                    <span className="text-sm font-semibold text-[#F63049] dark:text-[#F63049] group-hover:text-[#F63049]/80 dark:group-hover:text-[#F63049]/90">🎯 Manage Groups</span>
                   </button>
                 </Link>
               </div>
             </div>
 
             {/* Stats */}
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-lg shadow-slate-200/50 dark:shadow-none overflow-hidden">
-              <div className="p-6 border-b border-slate-200 dark:border-slate-800">
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Your Stats</h3>
+            <div className="bg-white dark:bg-black rounded-2xl border border-gray-200 dark:border-gray-800 shadow-lg dark:shadow-none overflow-hidden">
+              <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Your Stats</h3>
               </div>
               <div className="p-6 space-y-4">
-                <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-blue-900/50 border border-blue-200 dark:border-blue-800">
-                  <span className="text-sm font-medium text-blue-700 dark:text-blue-300">👥 Friends</span>
-                  <span className="text-2xl font-black text-blue-700 dark:text-blue-300">{friendsCount}</span>
+                <div className="flex items-center justify-between p-4 rounded-xl bg-[#F63049]/10 dark:bg-[#F63049]/20 border border-[#F63049]/30 dark:border-[#F63049]/40">
+                  <span className="text-sm font-medium text-[#F63049] dark:text-[#F63049]">👥 Friends</span>
+                  <span className="text-2xl font-black text-[#F63049] dark:text-[#F63049]">{friendsCount}</span>
                 </div>
-                <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50 border border-purple-200 dark:border-purple-800">
-                  <span className="text-sm font-medium text-purple-700 dark:text-purple-300">🎯 Groups</span>
-                  <span className="text-2xl font-black text-purple-700 dark:text-purple-300">{groupsCount}</span>
+                <div className="flex items-center justify-between p-4 rounded-xl bg-[#F63049]/10 dark:bg-[#F63049]/20 border border-[#F63049]/30 dark:border-[#F63049]/40">
+                  <span className="text-sm font-medium text-[#F63049] dark:text-[#F63049]">🎯 Groups</span>
+                  <span className="text-2xl font-black text-[#F63049] dark:text-[#F63049]">{groupsCount}</span>
                 </div>
               </div>
             </div>
@@ -584,7 +584,7 @@ export default function DashboardPage() {
             <AlertDialogAction
               onClick={handleDeleteAccount}
               disabled={isDeleting}
-              className="bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700"
+              className="bg-[#F63049] hover:bg-[#F63049]/90 dark:bg-[#F63049] dark:hover:bg-[#F63049]/90"
             >
               {isDeleting ? 'Deleting...' : 'Delete Account'}
             </AlertDialogAction>
