@@ -11,8 +11,9 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Eye, EyeOff } from 'lucide-react'
-import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence } from 'firebase/auth'
+import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence, sendPasswordResetEmail } from 'firebase/auth'
 import { collection, query, where, getDocs } from 'firebase/firestore'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { auth, db } from '@/lib/firebase'
 import { toast } from 'sonner'
 
@@ -25,6 +26,11 @@ export default function LoginPage() {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [showResetDialog, setShowResetDialog] = useState(false)
+  const [resetEmail, setResetEmail] = useState('')
+  const [resetUid, setResetUid] = useState('')
+  const [isResetting, setIsResetting] = useState(false)
+  const [resetError, setResetError] = useState('')
 
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -89,6 +95,54 @@ export default function LoginPage() {
       setErrors({ form: 'Login failed. Please check your credentials.' })
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handlePasswordReset = async () => {
+    setIsResetting(true)
+    setResetError('')
+
+    try {
+      let email = resetEmail
+
+      // If UID is provided instead of email, look up the email
+      if (resetUid && !resetEmail) {
+        const usersRef = collection(db, 'users')
+        const q = query(usersRef, where('uid', '==', resetUid.toLowerCase()))
+        const querySnapshot = await getDocs(q)
+
+        if (querySnapshot.empty) {
+          setResetError('No account found with this UID')
+          setIsResetting(false)
+          return
+        }
+
+        email = querySnapshot.docs[0].data().email
+      }
+
+      if (!email) {
+        setResetError('Please enter your email or UID')
+        setIsResetting(false)
+        return
+      }
+
+      // Send password reset email
+      await sendPasswordResetEmail(auth, email)
+      toast.success('Password reset email sent! Check your inbox.')
+      setShowResetDialog(false)
+      setResetEmail('')
+      setResetUid('')
+    } catch (error: any) {
+      console.error('Password reset error:', error)
+      if (error.code === 'auth/user-not-found') {
+        setResetError('No account found with this email')
+      } else if (error.code === 'auth/invalid-email') {
+        setResetError('Invalid email address')
+      } else {
+        setResetError('Failed to send reset email. Please try again.')
+      }
+    } finally {
+      setIsResetting(false)
     }
   }
 
@@ -179,6 +233,17 @@ export default function LoginPage() {
                   {errors.password && <p className="text-sm text-red-500 font-medium">{errors.password}</p>}
                 </div>
 
+                {/* Forgot Password Link */}
+                <div className="text-right">
+                  <button
+                    type="button"
+                    onClick={() => setShowResetDialog(true)}
+                    className="text-sm font-semibold text-[#F63049] hover:text-[#d42a3f] transition-colors"
+                  >
+                    Forgot Password?
+                  </button>
+                </div>
+
                 {errors.form && (
                   <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800">
                     <p className="text-sm text-red-600 dark:text-red-400 font-medium text-center">{errors.form}</p>
@@ -205,6 +270,84 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
+
+      {/* Password Reset Dialog */}
+      <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-[#F63049]">Reset Password</DialogTitle>
+            <DialogDescription>
+              Enter your email or college UID to receive a password reset link.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="reset-uid" className="text-sm font-semibold">College UID</Label>
+              <Input
+                id="reset-uid"
+                placeholder="e.g., 23bcs12345"
+                value={resetUid}
+                onChange={(e) => {
+                  setResetUid(e.target.value.toLowerCase())
+                  setResetError('')
+                }}
+                className="h-11 rounded-xl border-2"
+              />
+            </div>
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-gray-300 dark:border-gray-700" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-white dark:bg-gray-900 px-2 text-gray-500">Or</span>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="reset-email" className="text-sm font-semibold">Email Address</Label>
+              <Input
+                id="reset-email"
+                type="email"
+                placeholder="your.email@example.com"
+                value={resetEmail}
+                onChange={(e) => {
+                  setResetEmail(e.target.value)
+                  setResetError('')
+                }}
+                className="h-11 rounded-xl border-2"
+              />
+            </div>
+            {resetError && (
+              <div className="p-3 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800">
+                <p className="text-sm text-red-600 dark:text-red-400 font-medium">{resetError}</p>
+              </div>
+            )}
+          </div>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setShowResetDialog(false)
+                setResetEmail('')
+                setResetUid('')
+                setResetError('')
+              }}
+              disabled={isResetting}
+              className="rounded-xl"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={handlePasswordReset}
+              disabled={isResetting || (!resetEmail && !resetUid)}
+              className="rounded-xl bg-[#F63049] hover:bg-[#d42a3f] text-white"
+            >
+              {isResetting ? 'Sending...' : 'Send Reset Link'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
