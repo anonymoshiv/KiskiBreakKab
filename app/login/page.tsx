@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Eye, EyeOff } from 'lucide-react'
-import { signInWithEmailAndPassword } from 'firebase/auth'
+import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence } from 'firebase/auth'
 import { collection, query, where, getDocs } from 'firebase/firestore'
 import { auth, db } from '@/lib/firebase'
 import { toast } from 'sonner'
@@ -46,6 +46,9 @@ export default function LoginPage() {
     }
 
     try {
+      // Set persistence to LOCAL before signing in (ensures user stays logged in)
+      await setPersistence(auth, browserLocalPersistence)
+      
       // Find user by UID in Firestore
       const usersRef = collection(db, 'users')
       const q = query(usersRef, where('uid', '==', formData.uid.toLowerCase()))

@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
+import { getAuth, setPersistence, browserLocalPersistence } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 
 // Your Firebase configuration
@@ -19,5 +19,13 @@ const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0
 // Initialize Firebase services
 export const auth = getAuth(app)
 export const db = getFirestore(app)
+
+// Set persistence to LOCAL (keeps user logged in across browser sessions and tabs)
+// This ensures users stay logged in until they explicitly log out
+if (typeof window !== 'undefined') {
+  setPersistence(auth, browserLocalPersistence).catch((error) => {
+    console.error('Failed to set auth persistence:', error)
+  })
+}
 
 export default app

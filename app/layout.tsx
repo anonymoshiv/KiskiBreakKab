@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/components/theme-provider'
+import { AuthProvider } from '@/contexts/AuthContext'
 import './globals.css'
 
 const _geist = Geist({ subsets: ["latin"] });
@@ -31,9 +32,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <Toaster position="top-center" richColors />
-          <Analytics />
+          <AuthProvider>
+            {children}
+            <Toaster position="top-center" richColors />
+            <Analytics />
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

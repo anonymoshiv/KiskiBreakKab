@@ -13,7 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { LogOut, User, Trash2, Bell, UserPlus, Users as UsersIcon } from 'lucide-react'
 import { onAuthStateChanged, signOut, deleteUser } from 'firebase/auth'
-import { collection, query, where, getDocs, doc, getDoc, deleteDoc, writeBatch, updateDoc, arrayUnion, onSnapshot, Unsubscribe } from 'firebase/firestore'
+import { collection, query, where, getDocs, doc, getDoc, deleteDoc, writeBatch, updateDoc, arrayUnion, onSnapshot, Unsubscribe, setDoc } from 'firebase/firestore'
 import { auth, db } from '@/lib/firebase'
 import { toast } from 'sonner'
 import { acceptFriendRequest, rejectFriendRequest, getPendingRequests } from '@/lib/friends'
@@ -201,18 +201,27 @@ export default function DashboardPage() {
     try {
       const notifs: any[] = []
       
+      // Get dismissed notifications from Firestore
+      const dismissedNotificationsDoc = await getDoc(doc(db, 'users', userUid, 'settings', 'dismissedNotifications'))
+      const dismissedIds = dismissedNotificationsDoc.exists() 
+        ? (dismissedNotificationsDoc.data().notificationIds || [])
+        : []
+      
       // Load friend requests from friendRequests collection
       const pendingRequests = await getPendingRequests(userUid)
       
       for (const request of pendingRequests) {
-        notifs.push({
-          id: request.id,
-          type: 'friend_request',
-          from: request.fromName,
-          fromUid: request.from,
-          timestamp: request.createdAt?.toDate?.() || new Date(),
-          message: `${request.fromName} sent you a friend request`
-        })
+        // Skip if this notification was dismissed
+        if (!dismissedIds.includes(request.id)) {
+          notifs.push({
+            id: request.id,
+            type: 'friend_request',
+            from: request.fromName,
+            fromUid: request.from,
+            timestamp: request.createdAt?.toDate?.() || new Date(),
+            message: `${request.fromName} sent you a friend request`
+          })
+        }
       }
       
       // Load group invitations (groups where user is member but hasn't been notified yet)
@@ -224,6 +233,9 @@ export default function DashboardPage() {
       
       for (const groupDoc of groupsSnapshot.docs) {
         const groupData = groupDoc.data()
+        // Skip if this notification was dismissed
+        if (dismissedIds.includes(groupDoc.id)) continue
+        
         // Check if this is a new group invitation (created in last 24 hours and user is not the owner)
         if (groupData.ownerId !== userUid) {
           const createdAt = groupData.createdAt?.toDate() || new Date()
@@ -287,9 +299,31 @@ export default function DashboardPage() {
     }
   }
 
-  const handleDismissNotification = (notificationId: string, type: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== notificationId))
-    setNotificationCount(prev => Math.max(0, prev - 1))
+  const handleDismissNotification = async (notificationId: string, type: string) => {
+    try {
+      // Update local state
+      setNotifications(prev => prev.filter(n => n.id !== notificationId))
+      setNotificationCount(prev => Math.max(0, prev - 1))
+      
+      // Persist the dismissal to Firestore
+      const dismissedNotificationsRef = doc(db, 'users', userUid, 'settings', 'dismissedNotifications')
+      const dismissedNotificationsDoc = await getDoc(dismissedNotificationsRef)
+      
+      if (dismissedNotificationsDoc.exists()) {
+        // Update existing document
+        await updateDoc(dismissedNotificationsRef, {
+          notificationIds: arrayUnion(notificationId)
+        })
+      } else {
+        // Create new document
+        await setDoc(dismissedNotificationsRef, {
+          notificationIds: [notificationId]
+        })
+      }
+    } catch (error) {
+      console.error('Error dismissing notification:', error)
+      toast.error('Failed to dismiss notification')
+    }
   }
   
   const timeToMinutes = (timeStr: string): number => {

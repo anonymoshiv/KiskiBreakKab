@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Eye, EyeOff } from 'lucide-react'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword, setPersistence, browserLocalPersistence } from 'firebase/auth'
 import { doc, setDoc } from 'firebase/firestore'
 import { auth, db } from '@/lib/firebase'
 import { toast } from 'sonner'
@@ -79,6 +79,9 @@ export default function RegisterPage() {
     }
 
     try {
+      // Set persistence to LOCAL before creating account (ensures user stays logged in)
+      await setPersistence(auth, browserLocalPersistence)
+      
       // Create user in Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(
         auth,

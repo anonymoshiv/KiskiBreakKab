@@ -1,10 +1,42 @@
 'use client'
 
+import { useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { useAuth } from '@/contexts/AuthContext'
 
 export default function HomePage() {
+  const router = useRouter()
+  const { user, loading } = useAuth()
+
+  useEffect(() => {
+    // If user is authenticated, redirect to dashboard
+    if (!loading && user) {
+      router.push('/dashboard')
+    }
+  }, [user, loading, router])
+
+  // Show loading state while checking auth
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black">
+        <div className="text-center">
+          <div className="w-16 h-16 rounded-xl bg-[#F63049] flex items-center justify-center mx-auto mb-4 animate-pulse">
+            <span className="text-white text-2xl font-bold">K</span>
+          </div>
+          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // If user is logged in, don't show homepage (redirect is happening)
+  if (user) {
+    return null
+  }
+
   return (
     <div className="min-h-screen bg-f63049 dark:bg-black">
       {/* Header */}
