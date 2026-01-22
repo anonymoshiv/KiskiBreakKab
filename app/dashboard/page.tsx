@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CurrentSlotWidget } from '@/components/current-slot-widget'
 import { FreeFriendsList } from '@/components/free-friends-list'
+import { MessagesInbox } from '@/components/messages-inbox'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -414,6 +415,9 @@ export default function DashboardPage() {
           <div className="flex items-center gap-2 sm:gap-4">
             <ThemeToggle />
             
+            {/* Messages Inbox */}
+            <MessagesInbox userUid={userUid} />
+            
             {/* Notifications */}
             <Popover open={showNotifications} onOpenChange={setShowNotifications}>
               <PopoverTrigger asChild>
@@ -602,7 +606,12 @@ export default function DashboardPage() {
         </div>
 
         {/* Friends Free Now */}
-        <FreeFriendsList friends={freeFriends} isLoading={loadingFriends} />
+        <FreeFriendsList 
+          friends={freeFriends} 
+          isLoading={loadingFriends}
+          currentUserUid={userUid}
+          currentUserName={userName}
+        />
       </div>
 
       {/* Delete Account Confirmation Dialog */}

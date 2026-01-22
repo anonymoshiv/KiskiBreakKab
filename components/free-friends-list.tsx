@@ -3,6 +3,7 @@
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { MessageDialog } from '@/components/message-dialog'
 
 interface Friend {
   id: string
@@ -15,9 +16,11 @@ interface Friend {
 interface FreeFriendsListProps {
   friends?: Friend[]
   isLoading?: boolean
+  currentUserUid?: string
+  currentUserName?: string
 }
 
-export function FreeFriendsList({ friends, isLoading = false }: FreeFriendsListProps) {
+export function FreeFriendsList({ friends, isLoading = false, currentUserUid, currentUserName }: FreeFriendsListProps) {
   const displayFriends = friends || []
 
   return (
@@ -51,9 +54,19 @@ export function FreeFriendsList({ friends, isLoading = false }: FreeFriendsListP
                     <p className="text-xs text-slate-600 dark:text-slate-400">{friend.uid}</p>
                   </div>
                 </div>
-                <div className="px-3 py-1.5 rounded-full bg-green-500 shadow-lg shadow-green-500/40 flex items-center gap-1.5">
-                  <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                  <span className="text-white font-bold text-xs">FREE</span>
+                <div className="flex items-center gap-3">
+                  {currentUserUid && currentUserName && (
+                    <MessageDialog
+                      friendName={friend.name}
+                      friendUid={friend.uid}
+                      currentUserUid={currentUserUid}
+                      currentUserName={currentUserName}
+                    />
+                  )}
+                  <div className="px-3 py-1.5 rounded-full bg-green-500 shadow-lg shadow-green-500/40 flex items-center gap-1.5">
+                    <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                    <span className="text-white font-bold text-xs">FREE</span>
+                  </div>
                 </div>
               </div>
             ))}
