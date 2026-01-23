@@ -397,19 +397,19 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black">
+    <div className="min-h-screen bg-[#F9FAFB] dark:bg-[#111827]">
       {/* Header */}
-      <div className="sticky top-0 z-50 border-b border-gray-200/50 dark:border-gray-800/50 bg-white/80 dark:bg-black/80 backdrop-blur-xl">
+      <div className="sticky top-0 z-50 border-b border-[#E5E7EB] dark:border-gray-800/50 bg-white/95 dark:bg-[#1F2937]/95 backdrop-blur-xl shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-5 flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-[#F63049] flex items-center justify-center shadow-lg shadow-[#F63049]/30">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#F63049] to-[#ff4757] flex items-center justify-center shadow-sm">
               <span className="text-white text-base sm:text-lg font-bold">K</span>
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-lg sm:text-xl font-black text-[#F63049] dark:text-[#F63049]">
+              <h1 className="text-base sm:text-lg font-semibold text-[#1F2937] dark:text-white">
                 KiskiBreakKab
               </h1>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Find free friends instantly</p>
+              <p className="text-xs text-[#6B7280]">Find free friends</p>
             </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
@@ -421,8 +421,8 @@ export default function DashboardPage() {
             {/* Notifications */}
             <Popover open={showNotifications} onOpenChange={setShowNotifications}>
               <PopoverTrigger asChild>
-                <button className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                  <Bell className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                <button className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all active:scale-95">
+                  <Bell className="h-5 w-5 text-[#6B7280] dark:text-gray-300" />
                   {notificationCount > 0 && (
                     <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-[#F63049] flex items-center justify-center text-xs font-bold text-white shadow-lg">
                       {notificationCount > 9 ? '9+' : notificationCount}
@@ -430,16 +430,16 @@ export default function DashboardPage() {
                   )}
                 </button>
               </PopoverTrigger>
-              <PopoverContent align="end" className="w-80 sm:w-96 p-0">
-                <div className="bg-[#F63049] p-4">
-                  <h3 className="text-lg font-bold text-white">Notifications</h3>
-                  <p className="text-xs text-white/80">{notificationCount} new notification{notificationCount !== 1 ? 's' : ''}</p>
+              <PopoverContent align="end" className="w-80 sm:w-96 p-0 shadow-lg">
+                <div className="bg-gradient-to-r from-[#F63049] to-[#ff4757] p-4">
+                  <h3 className="text-lg font-semibold text-white">Notifications</h3>
+                  <p className="text-sm text-white/90">{notificationCount} new</p>
                 </div>
                 <div className="max-h-96 overflow-y-auto">
                   {notifications.length > 0 ? (
-                    <div className="divide-y divide-gray-200 dark:divide-gray-800">
+                    <div className="divide-y divide-[#E5E7EB] dark:divide-gray-800">
                       {notifications.map(notif => (
-                        <div key={notif.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors">
+                        <div key={notif.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-all hover:translate-x-0.5">  
                           {notif.type === 'friend_request' ? (
                             <div className="space-y-3">
                               <div className="flex items-start gap-3">
@@ -458,7 +458,7 @@ export default function DashboardPage() {
                                 <Button
                                   onClick={() => handleAcceptFriendRequest(notif.id)}
                                   size="sm"
-                                  className="flex-1 h-8 text-xs bg-green-600 hover:bg-green-700"
+                                  className="flex-1 h-9 text-xs rounded-lg bg-[#F63049] hover:bg-[#e52a42] active:scale-95 transition-all shadow-sm"
                                 >
                                   Accept
                                 </Button>
@@ -466,7 +466,7 @@ export default function DashboardPage() {
                                   onClick={() => handleRejectFriendRequest(notif.id)}
                                   size="sm"
                                   variant="outline"
-                                  className="flex-1 h-8 text-xs border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-900/30"
+                                  className="flex-1 h-9 text-xs rounded-lg border-[#E5E7EB] text-[#6B7280] hover:bg-gray-100 active:scale-95 transition-all"
                                 >
                                   Reject
                                 </Button>
@@ -514,8 +514,8 @@ export default function DashboardPage() {
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 sm:gap-3 px-2 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors active:scale-95">
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#F63049] flex items-center justify-center font-bold text-white text-xs sm:text-sm shadow-lg">
+                <button className="flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-white dark:bg-gray-800 border border-[#E5E7EB] dark:border-gray-700 hover:shadow-md transition-all active:scale-95">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-[#F63049] to-[#ff4757] flex items-center justify-center font-semibold text-white text-xs sm:text-sm">
                     {userName.charAt(0).toUpperCase()}
                   </div>
                   <span className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 hidden sm:inline">{userName.split(' ')[0]}</span>
@@ -544,61 +544,60 @@ export default function DashboardPage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 md:py-8 space-y-4 sm:space-y-6 md:space-y-8">
+      <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
         {/* Welcome Card */}
-        <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-[#F63049] p-6 sm:p-8 shadow-2xl shadow-[#F63049]/30">
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#F63049] to-[#ff6a7c] py-6 px-8 shadow-md">
           <div className="relative z-10">
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white mb-1 sm:mb-2">Welcome back, {userName}! 👋</h2>
-            <p className="text-white/80 text-sm sm:text-base md:text-lg">Check who's free during breaks and plan hangouts instantly</p>
+            <h2 className="text-2xl font-semibold text-white mb-1">Welcome back, {userName}! 👋</h2>
+            <p className="text-sm text-red-100">Check who's free during breaks and plan hangouts</p>
           </div>
         </div>
 
         {/* Dashboard Grid */}
-        <div className="grid gap-4 sm:gap-6 md:gap-8 lg:grid-cols-3">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Current Slot (Full width on mobile) */}
           <div className="lg:col-span-2">
             <CurrentSlotWidget timetable={userTimetable} />
           </div>
 
           {/* Right Column - Quick Actions */}
-          <div className="space-y-6">
-            <div className="bg-white dark:bg-black rounded-2xl border border-gray-200 dark:border-gray-800 shadow-lg dark:shadow-none overflow-hidden">
-              <div className="p-6 border-b border-gray-200 dark:border-gray-800">
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Quick Actions</h3>
+          <div className="lg:col-span-1 space-y-6">
+            <div className="bg-white dark:bg-[#1F2937] rounded-xl border border-[#E5E7EB] dark:border-gray-800 shadow-sm overflow-hidden">
+              <div className="p-4 border-b border-[#E5E7EB] dark:border-gray-800">
+                <h3 className="text-lg font-semibold text-[#1F2937] dark:text-white">Quick Actions</h3>
               </div>
               <div className="p-4 space-y-2">
                 <Link href="/timetable" className="block">
-                  <button className="w-full text-left px-4 py-3 rounded-xl bg-[#F63049]/10 dark:bg-[#F63049]/20 border border-[#F63049]/30 dark:border-[#F63049]/40 hover:shadow-lg hover:shadow-[#F63049]/20 transition-all duration-200 hover:scale-[1.02] group">
-                    <span className="text-sm font-semibold text-[#F63049] dark:text-[#F63049] group-hover:text-[#F63049]/80 dark:group-hover:text-[#F63049]/90">📅 Edit Timetable</span>
+                  <button className="w-full text-left px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border border-[#E5E7EB] dark:border-gray-700 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 ease-in-out active:scale-95 group">
+                    <span className="text-sm font-medium text-[#1F2937] dark:text-gray-200">📅 Edit Timetable</span>
                   </button>
                 </Link>
                 <Link href="/friends" className="block">
-                  <button className="w-full text-left px-4 py-3 rounded-xl bg-[#F63049]/10 dark:bg-[#F63049]/20 border border-[#F63049]/30 dark:border-[#F63049]/40 hover:shadow-lg hover:shadow-[#F63049]/20 transition-all duration-200 hover:scale-[1.02] group">
-                    <span className="text-sm font-semibold text-[#F63049] dark:text-[#F63049] group-hover:text-[#F63049]/80 dark:group-hover:text-[#F63049]/90">👥 Manage Friends</span>
+                  <button className="w-full text-left px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border border-[#E5E7EB] dark:border-gray-700 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 ease-in-out active:scale-95 group">
+                    <span className="text-sm font-medium text-[#1F2937] dark:text-gray-200">👥 Manage Friends</span>
                   </button>
                 </Link>
                 <Link href="/groups" className="block">
-                  <button className="w-full text-left px-4 py-3 rounded-xl bg-[#F63049]/10 dark:bg-[#F63049]/20 border border-[#F63049]/30 dark:border-[#F63049]/40 hover:shadow-lg hover:shadow-[#F63049]/20 transition-all duration-200 hover:scale-[1.02] group">
-                    <span className="text-sm font-semibold text-[#F63049] dark:text-[#F63049] group-hover:text-[#F63049]/80 dark:group-hover:text-[#F63049]/90">🎯 Manage Groups</span>
+                  <button className="w-full text-left px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border border-[#E5E7EB] dark:border-gray-700 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 ease-in-out active:scale-95 group">
+                    <span className="text-sm font-medium text-[#1F2937] dark:text-gray-200">🎯 Manage Groups</span>
                   </button>
                 </Link>
               </div>
             </div>
 
             {/* Stats */}
-            <div className="bg-white dark:bg-black rounded-2xl border border-gray-200 dark:border-gray-800 shadow-lg dark:shadow-none overflow-hidden">
-              <div className="p-6 border-b border-gray-200 dark:border-gray-800">
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Your Stats</h3>
+            <div className="bg-white dark:bg-[#1F2937] rounded-xl border border-[#E5E7EB] dark:border-gray-800 shadow-sm overflow-hidden">
+              <div className="p-4 border-b border-[#E5E7EB] dark:border-gray-800">
+                <h3 className="text-lg font-semibold text-[#1F2937] dark:text-white">Your Stats</h3>
               </div>
-              <div className="p-6 space-y-4">
-                <div className="flex items-center justify-between p-4 rounded-xl bg-[#F63049]/10 dark:bg-[#F63049]/20 border border-[#F63049]/30 dark:border-[#F63049]/40">
-                  <span className="text-sm font-medium text-[#F63049] dark:text-[#F63049]">👥 Friends</span>
-                  <span className="text-2xl font-black text-[#F63049] dark:text-[#F63049]">{friendsCount}</span>
+              <div className="p-4 space-y-3">
+                <div className="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-gray-800 border border-[#E5E7EB] dark:border-gray-700">
+                  <span className="text-sm text-[#6B7280]">👥 Friends</span>
+                  <span className="text-xl font-bold text-[#F63049]">{friendsCount}</span>
                 </div>
-                <div className="flex items-center justify-between p-4 rounded-xl bg-[#F63049]/10 dark:bg-[#F63049]/20 border border-[#F63049]/30 dark:border-[#F63049]/40">
-                  <span className="text-sm font-medium text-[#F63049] dark:text-[#F63049]">🎯 Groups</span>
-                  <span className="text-2xl font-black text-[#F63049] dark:text-[#F63049]">{groupsCount}</span>
+                <div className="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-gray-800 border border-[#E5E7EB] dark:border-gray-700">
+                  <span className="text-sm text-[#6B7280]">🎯 Groups</span>
+                  <span className="text-xl font-bold text-[#F63049]">{groupsCount}</span>
                 </div>
               </div>
             </div>
