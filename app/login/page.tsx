@@ -153,9 +153,11 @@ export default function LoginPage() {
            <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_20px,#00000010_20px,#00000010_40px)]"></div>
            
            <div className="relative z-10">
-             <div className="h-16 w-16 bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center">
-                <span className="text-black text-3xl font-black">K</span>
-             </div>
+             <Link href="/">
+               <div className="h-16 w-16 bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center cursor-pointer hover:scale-105 transition-transform">
+                  <span className="text-black text-3xl font-black">K</span>
+               </div>
+             </Link>
            </div>
 
            <div className="relative z-10 space-y-6">
@@ -179,12 +181,12 @@ export default function LoginPage() {
             
             {/* Mobile Header */}
             <div className="lg:hidden flex justify-between items-center mb-8">
-               <div className="flex items-center gap-3">
+               <Link href="/" className="flex items-center gap-3 cursor-pointer">
                  <div className="h-10 w-10 bg-[#F63049] border-2 border-black flex items-center justify-center">
                     <span className="text-white font-black">K</span>
                  </div>
                  <span className="font-bold text-xl tracking-tighter">Login.</span>
-               </div>
+               </Link>
                <ThemeToggle />
             </div>
 
