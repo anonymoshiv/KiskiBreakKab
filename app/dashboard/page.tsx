@@ -8,6 +8,7 @@ import { CurrentSlotWidget } from '@/components/current-slot-widget'
 import { FreeFriendsList } from '@/components/free-friends-list'
 import { MessagesInbox } from '@/components/messages-inbox'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { NotificationButton } from '@/components/notification-button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
@@ -228,6 +229,8 @@ export default function DashboardPage() {
           <div className="flex items-center gap-3 sm:gap-6">
             <ThemeToggle />
             
+            <NotificationButton userUid={userUid} />
+            
             <MessagesInbox userUid={userUid} />
 
             {/* Notifications */}
@@ -309,7 +312,7 @@ export default function DashboardPage() {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-32 pb-20 relative z-10 space-y-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-32 pb-32 relative z-10 space-y-8">
         
         {/* Welcome Section */}
         <div className="bg-[#F63049] border-4 border-black dark:border-white p-6 sm:p-10 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#404040] text-white overflow-hidden relative group">
@@ -339,7 +342,10 @@ export default function DashboardPage() {
               currentUserUid={userUid}
               currentUserName={userName}
             />
-            <CurrentSlotWidget timetable={userTimetable} />
+            {/* Show on desktop only, hidden on mobile */}
+            <div className="hidden lg:block">
+              <CurrentSlotWidget timetable={userTimetable} />
+            </div>
           </div>
 
           {/* Sidebar Column */}
@@ -395,6 +401,10 @@ export default function DashboardPage() {
           </div>
 
         </div>
+
+        {/* Status Monitor - Mobile version */}
+        <CurrentSlotWidget timetable={userTimetable} />
+
       </main>
 
       {/* Delete Account Dialog */}
