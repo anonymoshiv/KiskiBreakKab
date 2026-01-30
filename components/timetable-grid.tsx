@@ -129,7 +129,7 @@ export function TimetableGrid({ onSave, isLoading = false, initialTimetable }: T
         </div>
       </div>
 
-      <div className="flex justify-end p-4 border-2 border-black dark:border-white bg-[#FEF08A] dark:bg-yellow-900 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#404040]">
+      <div className="flex justify-end p-4 border-2 border-black dark:border-white bg-[#E4E4E7] dark:bg-zinc-800 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#404040]">
         <Button 
           onClick={handleSave} 
           disabled={isLoading}

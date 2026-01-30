@@ -200,8 +200,8 @@ export default function FriendsPage() {
 
               {/* Pending Requests */}
               <div className="bg-white dark:bg-black border-2 border-black dark:border-white">
-                 <div className="bg-[#FEF08A] dark:bg-yellow-900 p-3 border-b-2 border-black dark:border-white">
-                    <h2 className="text-black dark:text-yellow-100 font-black uppercase tracking-wider text-sm flex items-center gap-2">
+                 <div className="bg-[#E4E4E7] dark:bg-zinc-800 p-3 border-b-2 border-black dark:border-white">
+                    <h2 className="text-black dark:text-white font-black uppercase tracking-wider text-sm flex items-center gap-2">
                        <Share2 className="h-4 w-4" /> Incoming ({pendingRequests.length})
                     </h2>
                  </div>

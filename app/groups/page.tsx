@@ -342,7 +342,7 @@ export default function GroupsPage() {
                                    <p className="font-mono text-[10px] text-gray-500">ID: {group.id.slice(0,6)}</p>
                                 </div>
                                 {group.ownerId === currentUserUid && (
-                                   <Crown className="h-4 w-4 text-[#FEF08A] fill-black stroke-black" />
+                                   <Crown className="h-4 w-4 text-[#F63049] fill-black stroke-black" />
                                 )}
                              </div>
                              
@@ -379,7 +379,7 @@ export default function GroupsPage() {
 
       <Dialog open={!!selectedGroupId} onOpenChange={(open) => !open && setSelectedGroupId(null)}>
         <DialogContent className="sm:max-w-md bg-white dark:bg-black p-0 border-4 border-black dark:border-white rounded-none shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] dark:shadow-[16px_16px_0px_0px_#fff]">
-          <DialogHeader className="p-4 border-b-2 border-black dark:border-white bg-[#8B5CF6] dark:bg-violet-900">
+          <DialogHeader className="p-4 pr-12 border-b-2 border-black dark:border-white bg-[#8B5CF6] dark:bg-violet-900">
             <DialogTitle className="text-xl font-black text-white uppercase tracking-wider flex items-center gap-2">
               <Activity className="h-6 w-6" />
               Squad Intel <span className="text-white/60 text-sm ml-auto font-mono">LIVE STATUS</span>
@@ -403,7 +403,7 @@ export default function GroupsPage() {
                          <p className="font-black uppercase text-sm group-hover:text-[#F63049] transition-colors">{member.name}</p>
                          <p className="font-mono text-[10px] text-gray-500">{member.uid}</p>
                          {member.uid === groups.find(g => g.id === selectedGroupId)?.ownerId && (
-                           <span className="inline-block mt-1 text-[9px] font-bold bg-[#FEF08A] text-black px-1 border border-black">SQUAD LEADER</span>
+                           <span className="inline-block mt-1 text-[9px] font-bold bg-[#E4E4E7] text-black px-1 border border-black">SQUAD LEADER</span>
                          )}
                       </div>
                       

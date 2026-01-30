@@ -143,7 +143,7 @@ export function MessagesInbox({ userUid, trigger }: MessagesInboxProps) {
                   className={`group relative p-4 border-2 border-black dark:border-white transition-all ${
                     msg.read
                       ? 'bg-white dark:bg-zinc-900'
-                      : 'bg-[#FEF08A] dark:bg-yellow-900/40' // Yellow tint for unread
+                      : 'bg-[#E4E4E7] dark:bg-zinc-800' // Gray tint for unread
                   }`}
                   onClick={() => !msg.read && handleMarkAsRead(msg.id)}
                 >

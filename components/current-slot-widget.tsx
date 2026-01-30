@@ -154,7 +154,7 @@ export function CurrentSlotWidget({ timetable }: CurrentSlotWidgetProps) {
     <div className="bg-white dark:bg-[#0a0a0a] border-2 border-black dark:border-white p-1">
       <div className="bg-black dark:bg-white p-3 flex justify-between items-center mb-1">
          <h3 className="text-white dark:text-black font-black uppercase tracking-wider text-sm">Status Monitor</h3>
-         <div className="font-mono text-xs font-bold text-[#F63049] bg-white dark:bg-black px-2 py-0.5 border border-white dark:border-black">
+         <div className="font-mono text-xs font-bold text-black dark:text-white bg-white dark:bg-black px-2 py-0.5 border border-white dark:border-black">
            LIVE: {slot.currentTime}
          </div>
       </div>

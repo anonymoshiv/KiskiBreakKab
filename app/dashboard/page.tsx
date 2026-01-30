@@ -333,13 +333,13 @@ export default function DashboardPage() {
           
           {/* Main Column */}
           <div className="lg:col-span-2 space-y-8">
-            <CurrentSlotWidget timetable={userTimetable} />
             <FreeFriendsList 
               friends={freeFriends} 
               isLoading={loadingFriends}
               currentUserUid={userUid}
               currentUserName={userName}
             />
+            <CurrentSlotWidget timetable={userTimetable} />
           </div>
 
           {/* Sidebar Column */}
@@ -381,14 +381,14 @@ export default function DashboardPage() {
                    <h3 className="text-white dark:text-black font-black uppercase tracking-widest text-sm">Network Stats</h3>
                 </div>
                 <div className="grid grid-cols-2 divide-x-2 divide-black dark:divide-white">
-                   <div className="p-6 text-center hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors">
-                      <span className="block text-4xl font-black text-[#F63049] mb-1">{friendsCount}</span>
-                      <span className="font-mono text-xs font-bold uppercase text-gray-500">Friends</span>
-                   </div>
-                   <div className="p-6 text-center hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors">
-                      <span className="block text-4xl font-black text-[#F63049] mb-1">{groupsCount}</span>
-                      <span className="font-mono text-xs font-bold uppercase text-gray-500">Groups</span>
-                   </div>
+                   <Link href="/friends" className="p-6 text-center hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors cursor-pointer group">
+                      <span className="block text-4xl font-black text-[#F63049] mb-1 group-hover:scale-110 transition-transform">{friendsCount}</span>
+                      <span className="font-mono text-xs font-bold uppercase text-gray-500 group-hover:text-black dark:group-hover:text-white transition-colors">Friends</span>
+                   </Link>
+                   <Link href="/groups" className="p-6 text-center hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors cursor-pointer group">
+                      <span className="block text-4xl font-black text-[#F63049] mb-1 group-hover:scale-110 transition-transform">{groupsCount}</span>
+                      <span className="font-mono text-xs font-bold uppercase text-gray-500 group-hover:text-black dark:group-hover:text-white transition-colors">Groups</span>
+                   </Link>
                 </div>
              </div>
 

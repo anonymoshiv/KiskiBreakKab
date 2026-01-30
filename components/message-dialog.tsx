@@ -66,7 +66,7 @@ export function MessageDialog({ friendName, friendUid, currentUserUid, currentUs
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md bg-white dark:bg-black p-0 border-2 border-black dark:border-white rounded-none shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#404040]">
-          <DialogHeader className="p-4 border-b-2 border-black dark:border-white bg-[#FEF08A] dark:bg-yellow-900">
+          <DialogHeader className="p-4 border-b-2 border-black dark:border-white bg-[#E4E4E7] dark:bg-zinc-800">
             <DialogTitle className="text-xl font-black text-black dark:text-white uppercase tracking-wider">
               Message {friendName}
             </DialogTitle>

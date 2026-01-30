@@ -45,7 +45,7 @@ export function FreeFriendsList({ friends, isLoading = false, currentUserUid, cu
                 <div className="flex items-center gap-3">
                   <div className="relative">
                     <Avatar className="h-10 w-10 border-2 border-black dark:border-white rounded-none">
-                      <AvatarFallback className="bg-[#FEF08A] dark:bg-yellow-900 text-black dark:text-white font-black text-xs rounded-none">
+                      <AvatarFallback className="bg-[#E4E4E7] dark:bg-zinc-800 text-black dark:text-white font-black text-xs rounded-none">
                         {friend.name.split(' ')[0][0]}
                         {friend.name.split(' ')[1]?.[0] || ''}
                       </AvatarFallback>
