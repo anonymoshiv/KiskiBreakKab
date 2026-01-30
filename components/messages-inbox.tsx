@@ -1,12 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { collection, query, where, onSnapshot, updateDoc, doc, Timestamp, deleteDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
-import { MessageCircle, Trash2, X } from 'lucide-react'
+import { MessageCircle, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 
 interface Message {
   id: string
@@ -90,8 +91,7 @@ export function MessagesInbox({ userUid, trigger }: MessagesInboxProps) {
   const formatTimestamp = (timestamp: Timestamp) => {
     if (!timestamp) return 'Just now'
     const date = timestamp.toDate()
-    const now = new Date()
-    const diffMs = now.getTime() - date.getTime()
+    const diffMs = new Date().getTime() - date.getTime()
     const diffMins = Math.floor(diffMs / 60000)
     
     if (diffMins < 1) return 'Just now'
@@ -116,11 +116,11 @@ export function MessagesInbox({ userUid, trigger }: MessagesInboxProps) {
       ) : (
         <button
           onClick={() => setOpen(true)}
-          className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className="relative inline-flex items-center justify-center p-3 bg-white dark:bg-zinc-900 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#fff] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_#fff] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all"
         >
-          <MessageCircle className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+          <MessageCircle className="h-6 w-6 text-black dark:text-white" />
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-[#F63049] flex items-center justify-center text-xs font-bold text-white shadow-lg">
+            <span className="absolute -top-3 -left-3 h-6 min-w-[1.5rem] px-1 bg-[#F63049] border-2 border-black dark:border-white flex items-center justify-center text-xs font-black text-white">
               {unreadCount > 9 ? '9+' : unreadCount}
             </span>
           )}
@@ -128,59 +128,55 @@ export function MessagesInbox({ userUid, trigger }: MessagesInboxProps) {
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-2xl max-h-[80vh]">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-[#F63049]">Messages</DialogTitle>
-            <DialogDescription>
-              {unreadCount > 0 ? `You have ${unreadCount} unread message${unreadCount > 1 ? 's' : ''}` : 'All caught up!'}
-            </DialogDescription>
+        <DialogContent className="sm:max-w-xl bg-white dark:bg-black p-0 border-2 border-black dark:border-white rounded-none shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#fff]">
+          <DialogHeader className="p-4 border-b-2 border-black dark:border-white bg-[#8B5CF6] dark:bg-violet-900">
+            <DialogTitle className="text-2xl font-black text-white uppercase tracking-wider flex items-center gap-2">
+              <MessageCircle className="h-6 w-6" />
+              Inbox ({unreadCount})
+            </DialogTitle>
           </DialogHeader>
-          <div className="max-h-[60vh] overflow-y-auto space-y-3 py-4">
+          <div className="max-h-[60vh] overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-zinc-900">
             {messages.length > 0 ? (
               messages.map((msg) => (
                 <div
                   key={msg.id}
-                  className={`p-4 rounded-xl border-2 transition-all ${
+                  className={`group relative p-4 border-2 border-black dark:border-white transition-all ${
                     msg.read
-                      ? 'bg-gray-50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-800'
-                      : 'bg-[#F63049]/5 dark:bg-[#F63049]/10 border-[#F63049]/30 dark:border-[#F63049]/40'
+                      ? 'bg-white dark:bg-zinc-900'
+                      : 'bg-[#FEF08A] dark:bg-yellow-900/40' // Yellow tint for unread
                   }`}
                   onClick={() => !msg.read && handleMarkAsRead(msg.id)}
                 >
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-8 h-8 rounded-full bg-[#F63049] flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">
+                      <div className="flex items-center gap-3 mb-2">
+                        <Avatar className="h-8 w-8 border-2 border-black dark:border-white rounded-none">
+                          <AvatarFallback className="bg-white dark:bg-black font-black text-black dark:text-white text-xs rounded-none">
                             {msg.fromName.charAt(0).toUpperCase()}
-                          </span>
-                        </div>
+                          </AvatarFallback>
+                        </Avatar>
                         <div>
-                          <p className="text-sm font-bold text-gray-900 dark:text-white">
-                            {msg.fromName}
-                            {!msg.read && (
-                              <span className="ml-2 px-2 py-0.5 rounded-full bg-[#F63049] text-white text-xs font-semibold">
-                                New
-                              </span>
-                            )}
-                          </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            {formatTimestamp(msg.timestamp)}
-                          </p>
+                          <p className="font-bold uppercase text-sm">{msg.fromName}</p>
+                          <p className="font-mono text-[10px] text-gray-500">{formatTimestamp(msg.timestamp)}</p>
                         </div>
+                        {!msg.read && (
+                          <span className="bg-[#F63049] text-white text-[10px] font-black uppercase px-2 border border-black dark:border-white ml-auto">
+                            NEW
+                          </span>
+                        )}
                       </div>
-                      <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
-                        {msg.message}
-                      </p>
+                      <div className="font-mono text-xs p-2 bg-white/50 dark:bg-black/50 border border-black dark:border-white border-dashed">
+                       {msg.message}
+                      </div>
                     </div>
                     <Button
-                      size="sm"
+                      size="icon"
                       variant="ghost"
                       onClick={(e) => {
                         e.stopPropagation()
                         handleDeleteMessage(msg.id)
                       }}
-                      className="h-8 w-8 p-0 hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-950/30"
+                      className="h-8 w-8 rounded-none border border-transparent hover:border-black dark:hover:border-white text-black dark:text-white opacity-0 group-hover:opacity-100 transition-opacity"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -188,12 +184,12 @@ export function MessagesInbox({ userUid, trigger }: MessagesInboxProps) {
                 </div>
               ))
             ) : (
-              <div className="text-center py-12">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 flex items-center justify-center mx-auto mb-4">
+              <div className="text-center py-12 flex flex-col items-center">
+                <div className="w-16 h-16 border-2 border-black dark:border-white bg-white dark:bg-black flex items-center justify-center mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#fff]">
                   <MessageCircle className="h-8 w-8 text-gray-400" />
                 </div>
-                <p className="text-sm font-semibold text-gray-900 dark:text-white mb-1">No messages yet</p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">Messages from friends will appear here</p>
+                <p className="font-black uppercase text-lg">No New Messages</p>
+                <p className="font-mono text-xs text-gray-500">Wait for friends to shout out.</p>
               </div>
             )}
           </div>

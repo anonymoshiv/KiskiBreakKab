@@ -3,14 +3,12 @@
 import React from "react"
 import { useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, ArrowRight } from 'lucide-react'
 import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence, sendPasswordResetEmail } from 'firebase/auth'
 import { collection, query, where, getDocs } from 'firebase/firestore'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -52,7 +50,7 @@ export default function LoginPage() {
     }
 
     try {
-      // Set persistence to LOCAL before signing in (ensures user stays logged in)
+      // Set persistence to LOCAL before signing in
       await setPersistence(auth, browserLocalPersistence)
       
       // Find user by UID in Firestore
@@ -73,7 +71,7 @@ export default function LoginPage() {
       // Sign in with email and password
       await signInWithEmailAndPassword(auth, userEmail, formData.password)
 
-      toast.success('Login successful!')
+      toast.success('System Access Granted')
       
       // Redirect to dashboard
       setTimeout(() => {
@@ -82,17 +80,15 @@ export default function LoginPage() {
     } catch (error: any) {
       console.error('Login error:', error)
       
-      // Handle Firebase errors
       if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-        setErrors({ form: 'Incorrect password. Please try again.' })
+        setErrors({ form: 'Incorrect password. Access Denied.' })
       } else if (error.code === 'auth/user-not-found') {
         setErrors({ form: 'No account found. Please register first.' })
       } else if (error.code === 'auth/too-many-requests') {
-        setErrors({ form: 'Too many failed attempts. Please try again later.' })
+        setErrors({ form: 'Too many failed attempts. Try again later.' })
       } else {
-        setErrors({ form: 'Login failed. Please try again.' })
+        setErrors({ form: 'Login failed. Check your credentials.' })
       }
-      setErrors({ form: 'Login failed. Please check your credentials.' })
     } finally {
       setIsLoading(false)
     }
@@ -126,9 +122,8 @@ export default function LoginPage() {
         return
       }
 
-      // Send password reset email
       await sendPasswordResetEmail(auth, email)
-      toast.success('Password reset email sent! Check your inbox.')
+      toast.success('Reset link dispatched to inbox.')
       setShowResetDialog(false)
       setResetEmail('')
       setResetUid('')
@@ -139,7 +134,7 @@ export default function LoginPage() {
       } else if (error.code === 'auth/invalid-email') {
         setResetError('Invalid email address')
       } else {
-        setResetError('Failed to send reset email. Please try again.')
+        setResetError('Failed to send reset email.')
       }
     } finally {
       setIsResetting(false)
@@ -147,193 +142,190 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black">
-      <div className="grid lg:grid-cols-2 min-h-screen">
-        {/* Left Side - Branding */}
-        <div className="hidden lg:flex flex-col justify-center items-center p-12 bg-[#F63049] relative overflow-hidden">
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
-          <div className="relative z-10 text-center space-y-6">
-            <div className="w-20 h-20 rounded-2xl bg-white flex items-center justify-center mx-auto shadow-2xl">
-              <span className="text-[#F63049] text-4xl font-black">K</span>
-            </div>
-            <h1 className="text-5xl font-black text-white">KiskiBreakKab</h1>
-            <p className="text-xl text-blue-100 max-w-md">Find your free friends during lecture breaks and never miss a hangout opportunity</p>
-            <div className="flex gap-8 justify-center pt-8">
-              <div className="text-center">
-                <div className="text-4xl font-black text-white">100+</div>
-                <div className="text-blue-200 text-sm">Students</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-black text-white">50+</div>
-                <div className="text-blue-200 text-sm">Groups</div>
-              </div>
-            </div>
-          </div>
+    <div className="min-h-screen bg-white dark:bg-[#0a0a0a] font-sans selection:bg-[#F63049] selection:text-white">
+      {/* Grid Background */}
+      <div className="fixed inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
+
+      <div className="grid lg:grid-cols-2 min-h-screen relative z-10">
+        
+        {/* Left Side - Visuals */}
+        <div className="hidden lg:flex flex-col justify-between p-12 bg-[#F63049] border-r-4 border-black dark:border-white relative overflow-hidden text-white">
+           <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_20px,#00000010_20px,#00000010_40px)]"></div>
+           
+           <div className="relative z-10">
+             <div className="h-16 w-16 bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center">
+                <span className="text-black text-3xl font-black">K</span>
+             </div>
+           </div>
+
+           <div className="relative z-10 space-y-6">
+             <h1 className="text-8xl font-black tracking-tighter leading-[0.85] select-none">
+               LOG<br/>IN.
+             </h1>
+             <p className="text-2xl font-bold font-mono border-l-4 border-black pl-6 py-2 bg-black/10 select-none">
+               RESUME BREAKING.
+             </p>
+           </div>
+
+           <div className="relative z-10 font-mono text-sm font-bold opacity-80 select-none">
+             SYSTEM_STATUS: ONLINE<br/>
+             ACTIVE_USERS: 100+
+           </div>
         </div>
 
-        {/* Right Side - Login Form */}
+        {/* Right Side - Form */}
         <div className="flex flex-col justify-center items-center p-6 lg:p-12">
-          <div className="w-full max-w-md space-y-8">
-            {/* Logo for mobile */}
-            <div className="lg:hidden text-center mb-8">
-              <div className="absolute top-6 right-6">
-                <ThemeToggle />
-              </div>
-              <div className="inline-flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-[#F63049] flex items-center justify-center shadow-lg">
-                  <span className="text-white text-xl font-bold">K</span>
-                </div>
-                <h1 className="text-2xl font-black text-[#F63049]">
-                  KiskiBreakKab
-                </h1>
-              </div>
+          <div className="w-full max-w-md">
+            
+            {/* Mobile Header */}
+            <div className="lg:hidden flex justify-between items-center mb-8">
+               <div className="flex items-center gap-3">
+                 <div className="h-10 w-10 bg-[#F63049] border-2 border-black flex items-center justify-center">
+                    <span className="text-white font-black">K</span>
+                 </div>
+                 <span className="font-bold text-xl tracking-tighter">Login.</span>
+               </div>
+               <ThemeToggle />
             </div>
 
-            {/* Header */}
-            <div className="space-y-2">
-              <h2 className="text-3xl font-black text-black dark:text-white">Welcome back</h2>
-              <p className="text-gray-600 dark:text-gray-400">Enter your credentials to access your account</p>
-            </div>
-            {/* Form */}
-            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-xl p-8">
+            <div className="bg-white dark:bg-zinc-900 border-2 border-black dark:border-zinc-700 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] p-8 relative">
+              
+              <div className="absolute -top-3 -right-3 bg-[#F63049] text-white text-xs font-bold px-3 py-1 border-2 border-black transform rotate-2">
+                SECURE ACCESS
+              </div>
+
+              <div className="mb-8">
+                 <h2 className="text-3xl font-black mb-2 uppercase">Welcome Back</h2>
+                 <p className="text-gray-500 font-medium font-mono text-xs">PLEASE IDENTIFY YOURSELF</p>
+              </div>
+
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* College UID */}
+                
                 <div className="space-y-2">
-                  <Label htmlFor="uid" className="text-sm font-semibold text-gray-700 dark:text-gray-300">College UID</Label>
+                  <Label htmlFor="uid" className="font-bold uppercase text-xs tracking-wider">College UID</Label>
                   <Input
                     id="uid"
-                    placeholder="e.g., 23bcs12345"
+                    placeholder="23BCS12345"
                     value={formData.uid}
                     onChange={e => handleChange('uid', e.target.value.toLowerCase())}
-                    className={`h-12 rounded-xl border-2 ${errors.uid ? 'border-red-500' : 'border-gray-200 dark:border-gray-700 focus:border-[#F63049]'}`}
+                    className="h-12 border-2 border-black dark:border-zinc-600 rounded-none focus:ring-0 focus:border-[#F63049] transition-colors font-mono placeholder:uppercase"
                   />
-                  {errors.uid && <p className="text-sm text-red-500 font-medium">{errors.uid}</p>}
+                  {errors.uid && <p className="text-xs font-bold text-red-500 uppercase">! {errors.uid}</p>}
                 </div>
 
-                {/* Password */}
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Password</Label>
+                  <div className="flex justify-between">
+                    <Label htmlFor="password" className="font-bold uppercase text-xs tracking-wider">Password</Label>
+                    <button
+                      type="button"
+                      onClick={() => setShowResetDialog(true)}
+                      className="text-xs font-bold text-gray-400 hover:text-[#F63049] uppercase transition-colors"
+                    >
+                      Forgot?
+                    </button>
+                  </div>
                   <div className="relative">
                     <Input
                       id="password"
                       type={showPassword ? 'text' : 'password'}
-                      placeholder="Enter your password"
+                      placeholder="••••••••"
                       value={formData.password}
                       onChange={e => handleChange('password', e.target.value)}
-                      className={`h-12 rounded-xl border-2 pr-12 ${errors.password ? 'border-red-500' : 'border-gray-200 dark:border-gray-700 focus:border-[#F63049]'}`}
+                      className="h-12 border-2 border-black dark:border-zinc-600 rounded-none pr-12 focus:ring-0 focus:border-[#F63049] transition-colors font-mono"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                      className="absolute right-4 top-1/2 -translate-y-1/2"
                     >
-                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
-                  {errors.password && <p className="text-sm text-red-500 font-medium">{errors.password}</p>}
-                </div>
-
-                {/* Forgot Password Link */}
-                <div className="text-right">
-                  <button
-                    type="button"
-                    onClick={() => setShowResetDialog(true)}
-                    className="text-sm font-semibold text-[#F63049] hover:text-[#d42a3f] transition-colors"
-                  >
-                    Forgot Password?
-                  </button>
+                  {errors.password && <p className="text-xs font-bold text-red-500 uppercase">! {errors.password}</p>}
                 </div>
 
                 {errors.form && (
-                  <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800">
-                    <p className="text-sm text-red-600 dark:text-red-400 font-medium text-center">{errors.form}</p>
+                  <div className="p-4 bg-red-100 dark:bg-red-900/20 border-2 border-red-500 text-red-600 dark:text-red-400 font-bold text-xs uppercase text-center">
+                    {errors.form}
                   </div>
                 )}
 
                 <Button 
                   type="submit" 
                   disabled={isLoading} 
-                  className="w-full h-12 rounded-xl bg-[#F63049] hover:bg-[#d42a3f] text-white font-bold text-base shadow-lg transition-all duration-300"
+                  className="w-full h-14 bg-black dark:bg-white text-white dark:text-black hover:bg-[#F63049] hover:text-white dark:hover:bg-[#F63049] dark:hover:text-white border-2 border-black dark:border-transparent rounded-none font-black text-lg uppercase tracking-widest transition-all hover:translate-x-[2px] hover:translate-y-[2px] shadow-none hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] active:translate-x-[4px] active:translate-y-[4px] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none cursor-pointer"
                 >
-                  {isLoading ? 'Logging in...' : 'Login'}
+                  {isLoading ? 'Authenticating...' : 'Enter System'}
                 </Button>
+
+                <div className="text-center pt-4 border-t-2 border-dashed border-gray-200 dark:border-zinc-800">
+                  <p className="text-xs font-bold uppercase text-gray-500 mb-2">New to the network?</p>
+                  <Link href="/register" className="inline-block font-black text-lg border-b-4 border-[#F63049] hover:text-[#F63049] hover:border-black dark:hover:border-white transition-colors leading-[0.8]">
+                    REGISTER NOW
+                  </Link>
+                </div>
+
               </form>
             </div>
-
-            {/* Register Link */}
-            <div className="text-center">
-              <span className="text-gray-600 dark:text-gray-400">Don't have an account? </span>
-              <Link href="/register" className="font-bold text-[#F63049] hover:text-[#d42a3f]">
-                Register here
-              </Link>
+            
+            <div className="hidden lg:block absolute top-6 right-6">
+              <ThemeToggle />
             </div>
+
           </div>
         </div>
       </div>
 
-      {/* Password Reset Dialog */}
+      {/* Password Reset Dialog - Brutalist Style */}
       <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md border-4 border-black dark:border-white shadow-[8px_8px_0px_0px_#F63049] rounded-none bg-white dark:bg-[#0a0a0a]">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-[#F63049]">Reset Password</DialogTitle>
-            <DialogDescription>
-              Enter your email or college UID to receive a password reset link.
+            <DialogTitle className="text-2xl font-black uppercase">Reset Password</DialogTitle>
+            <DialogDescription className="font-mono text-xs uppercase text-gray-500">
+              Recover access to your account via Email or UID.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="reset-uid" className="text-sm font-semibold">College UID</Label>
+              <Label className="font-bold uppercase text-xs">College UID</Label>
               <Input
-                id="reset-uid"
-                placeholder="e.g., 23bcs12345"
+                placeholder="23BCS..."
                 value={resetUid}
                 onChange={(e) => {
                   setResetUid(e.target.value.toLowerCase())
                   setResetError('')
                 }}
-                className="h-11 rounded-xl border-2"
+                className="rounded-none border-2 border-black dark:border-white focus:ring-0 font-mono"
               />
             </div>
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-gray-300 dark:border-gray-700" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white dark:bg-gray-900 px-2 text-gray-500">Or</span>
-              </div>
+            <div className="relative text-center">
+              <span className="bg-white dark:bg-[#0a0a0a] px-2 text-xs font-bold uppercase text-gray-400 relative z-10">Or via Email</span>
+              <div className="absolute top-1/2 w-full border-t border-dashed border-gray-300 -z-0"></div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="reset-email" className="text-sm font-semibold">Email Address</Label>
+              <Label className="font-bold uppercase text-xs">Email Address</Label>
               <Input
-                id="reset-email"
                 type="email"
-                placeholder="your.email@example.com"
+                placeholder="USER@EXAMPLE.COM"
                 value={resetEmail}
                 onChange={(e) => {
                   setResetEmail(e.target.value)
                   setResetError('')
                 }}
-                className="h-11 rounded-xl border-2"
+                className="rounded-none border-2 border-black dark:border-white focus:ring-0 font-mono"
               />
             </div>
             {resetError && (
-              <div className="p-3 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800">
-                <p className="text-sm text-red-600 dark:text-red-400 font-medium">{resetError}</p>
-              </div>
+              <p className="text-xs font-bold text-red-500 uppercase bg-red-100 p-2 border border-red-500">{resetError}</p>
             )}
           </div>
           <DialogFooter className="gap-2 sm:gap-0">
             <Button
               type="button"
               variant="outline"
-              onClick={() => {
-                setShowResetDialog(false)
-                setResetEmail('')
-                setResetUid('')
-                setResetError('')
-              }}
+              onClick={() => setShowResetDialog(false)}
               disabled={isResetting}
-              className="rounded-xl"
+              className="rounded-none border-2 border-black hover:bg-gray-100 font-bold uppercase"
             >
               Cancel
             </Button>
@@ -341,9 +333,9 @@ export default function LoginPage() {
               type="button"
               onClick={handlePasswordReset}
               disabled={isResetting || (!resetEmail && !resetUid)}
-              className="rounded-xl bg-[#F63049] hover:bg-[#d42a3f] text-white"
+              className="rounded-none bg-[#F63049] text-white hover:bg-black border-2 border-transparent hover:border-black font-bold uppercase"
             >
-              {isResetting ? 'Sending...' : 'Send Reset Link'}
+              {isResetting ? 'Sending...' : 'Send Link'}
             </Button>
           </DialogFooter>
         </DialogContent>

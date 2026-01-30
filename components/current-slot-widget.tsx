@@ -18,7 +18,6 @@ interface CurrentSlotWidgetProps {
   timetable?: Record<string, Record<number, string>> | null
 }
 
-// Define slot timings
 const SLOTS = [
   { slot_no: 1, start: '09:30', end: '10:20' },
   { slot_no: 2, start: '10:20', end: '11:10' },
@@ -30,13 +29,11 @@ const SLOTS = [
   { slot_no: 8, start: '15:35', end: '16:25' },
 ]
 
-// Convert time string to minutes since midnight
 function timeToMinutes(timeStr: string): number {
   const [hours, minutes] = timeStr.split(':').map(Number)
   return hours * 60 + minutes
 }
 
-// Get current slot based on real time
 function getCurrentSlot(timetable?: Record<string, Record<number, string>> | null): SlotInfo {
   const now = new Date()
   const day = now.toLocaleDateString('en-US', { weekday: 'long' })
@@ -44,7 +41,6 @@ function getCurrentSlot(timetable?: Record<string, Record<number, string>> | nul
   const currentTime = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
   const currentMinutes = timeToMinutes(currentTime)
 
-  // Check if weekend
   if (dayOfWeek === 0 || dayOfWeek === 6) {
     return {
       day,
@@ -56,13 +52,11 @@ function getCurrentSlot(timetable?: Record<string, Record<number, string>> | nul
     }
   }
 
-  // Check if within any slot
   for (const slot of SLOTS) {
     const startMinutes = timeToMinutes(slot.start)
     const endMinutes = timeToMinutes(slot.end)
 
     if (currentMinutes >= startMinutes && currentMinutes < endMinutes) {
-      // Get user's status for this slot
       const userStatus = timetable?.[day]?.[slot.slot_no] as 'FREE' | 'BUSY' | undefined
       
       return {
@@ -76,31 +70,28 @@ function getCurrentSlot(timetable?: Record<string, Record<number, string>> | nul
     }
   }
 
-  // Check if before first slot
   if (currentMinutes < timeToMinutes(SLOTS[0].start)) {
     return {
       day,
       slot_no: null,
-      time_range: 'Classes start at 09:30',
+      time_range: 'Starts 09:30',
       status: 'after-hours',
       userStatus: null,
       currentTime: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
     }
   }
 
-  // Check if after last slot
   if (currentMinutes >= timeToMinutes(SLOTS[SLOTS.length - 1].end)) {
     return {
       day,
       slot_no: null,
-      time_range: 'Classes ended at 16:25',
+      time_range: 'Classes Over',
       status: 'after-hours',
       userStatus: null,
       currentTime: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
     }
   }
 
-  // Must be in a break between slots
   return {
     day,
     slot_no: null,
@@ -115,7 +106,6 @@ export function CurrentSlotWidget({ timetable }: CurrentSlotWidgetProps) {
   const [slot, setSlot] = useState<SlotInfo>(getCurrentSlot(timetable))
 
   useEffect(() => {
-    // Update every 30 seconds
     const interval = setInterval(() => {
       setSlot(getCurrentSlot(timetable))
     }, 30000)
@@ -123,79 +113,69 @@ export function CurrentSlotWidget({ timetable }: CurrentSlotWidgetProps) {
     return () => clearInterval(interval)
   }, [timetable])
 
-  // Update when timetable changes
   useEffect(() => {
     setSlot(getCurrentSlot(timetable))
   }, [timetable])
 
   const getStatusBadge = () => {
-    // Show user status if in a slot
     if (slot.status === 'in-progress' && slot.userStatus) {
       if (slot.userStatus === 'FREE') {
-        return <div className="px-6 py-3 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 shadow-lg shadow-green-500/40 flex items-center gap-2">
-          <span className="w-3 h-3 bg-white rounded-full animate-pulse"></span>
-          <span className="text-white font-bold text-sm">You're FREE</span>
+        return <div className="w-full text-center px-4 py-3 bg-white border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#fff]">
+          <span className="text-black font-black uppercase tracking-widest text-lg">You Are Free</span>
         </div>
       } else {
-        return <div className="px-6 py-3 rounded-full bg-gradient-to-r from-red-500 to-rose-500 shadow-lg shadow-red-500/40 flex items-center gap-2">
-          <span className="w-3 h-3 bg-white rounded-full"></span>
-          <span className="text-white font-bold text-sm">You're BUSY</span>
+        return <div className="w-full text-center px-4 py-3 bg-[#F63049] text-white border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#fff]">
+          <span className="font-black uppercase tracking-widest text-lg">In Class</span>
         </div>
       }
     }
 
-    // Default status badges
     switch (slot.status) {
       case 'in-progress':
-        return <div className="px-6 py-3 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 shadow-lg shadow-blue-500/40 flex items-center gap-2">
-          <span className="text-white font-bold text-sm">📚 Set Your Timetable</span>
+        return <div className="w-full text-center px-4 py-3 bg-gray-100 dark:bg-zinc-800 border-2 border-black dark:border-white border-dashed">
+          <span className="font-bold uppercase tracking-widest text-sm text-gray-500">No Data Available</span>
         </div>
       case 'break':
-        return <div className="px-6 py-3 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 shadow-lg shadow-amber-500/40 flex items-center gap-2">
-          <span className="text-white font-bold text-sm">☕ Break Time</span>
+        return <div className="w-full text-center px-4 py-3 bg-yellow-400 text-black border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#fff]">
+          <span className="font-black uppercase tracking-widest text-lg">Break Time</span>
         </div>
       case 'weekend':
-        return <div className="px-6 py-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg shadow-purple-500/40 flex items-center gap-2">
-          <span className="text-white font-bold text-sm">🎉 Weekend Vibes</span>
+        return <div className="w-full text-center px-4 py-3 bg-purple-500 text-white border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#fff]">
+          <span className="font-black uppercase tracking-widest text-lg">Weekend</span>
         </div>
       case 'after-hours':
-        return <div className="px-6 py-3 rounded-full bg-gradient-to-r from-slate-600 to-slate-700 shadow-lg shadow-slate-500/40 flex items-center gap-2">
-          <span className="text-white font-bold text-sm">🌙 After Hours</span>
+        return <div className="w-full text-center px-4 py-3 bg-black dark:bg-white text-white dark:text-black border-2 border-black dark:border-white">
+          <span className="font-black uppercase tracking-widest text-lg">Day Ended</span>
         </div>
     }
   }
 
   return (
-    <div className="relative overflow-hidden bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none">
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10"></div>
-      <div className="relative z-10">
-        <div className="p-6 border-b border-slate-200 dark:border-slate-800">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xl font-black text-slate-900 dark:text-white">Current Slot</h3>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-              <Clock className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-              <span className="text-sm font-bold text-slate-700 dark:text-slate-300">{slot.currentTime}</span>
-            </div>
+    <div className="bg-white dark:bg-[#0a0a0a] border-2 border-black dark:border-white p-1">
+      <div className="bg-black dark:bg-white p-3 flex justify-between items-center mb-1">
+         <h3 className="text-white dark:text-black font-black uppercase tracking-wider text-sm">Status Monitor</h3>
+         <div className="font-mono text-xs font-bold text-[#F63049] bg-white dark:bg-black px-2 py-0.5 border border-white dark:border-black">
+           LIVE: {slot.currentTime}
+         </div>
+      </div>
+      
+      <div className="p-4 sm:p-6 space-y-6">
+        <div className="grid grid-cols-3 gap-3">
+          <div className="text-center p-3 border-2 border-black dark:border-white bg-gray-50 dark:bg-zinc-900">
+            <p className="text-[10px] sm:text-xs font-bold uppercase text-gray-500 mb-1">Current Day</p>
+            <p className="text-lg sm:text-xl font-black uppercase">{slot.day.slice(0, 3)}</p>
+          </div>
+          <div className="text-center p-3 border-2 border-black dark:border-white bg-gray-50 dark:bg-zinc-900">
+            <p className="text-[10px] sm:text-xs font-bold uppercase text-gray-500 mb-1">Slot No.</p>
+            <p className="text-2xl sm:text-3xl font-black text-[#F63049] leading-none">{slot.slot_no || '-'}</p>
+          </div>
+          <div className="text-center p-3 border-2 border-black dark:border-white bg-gray-50 dark:bg-zinc-900">
+            <p className="text-[10px] sm:text-xs font-bold uppercase text-gray-500 mb-1">Time Range</p>
+            <p className="text-xs sm:text-sm font-bold font-mono">{slot.time_range}</p>
           </div>
         </div>
-        <div className="p-6 space-y-6">
-          <div className="grid grid-cols-3 gap-4">
-            <div className="text-center p-4 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-blue-900/50 border border-blue-200 dark:border-blue-800">
-              <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-2">DAY</p>
-              <p className="text-lg font-black text-blue-700 dark:text-blue-300">{slot.day}</p>
-            </div>
-            <div className="text-center p-4 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50 border border-purple-200 dark:border-purple-800">
-              <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 mb-2">SLOT</p>
-              <p className="text-2xl font-black text-purple-700 dark:text-purple-300">{slot.slot_no || '-'}</p>
-            </div>
-            <div className="text-center p-4 rounded-xl bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-950/50 dark:to-pink-900/50 border border-pink-200 dark:border-pink-800">
-              <p className="text-xs font-semibold text-pink-600 dark:text-pink-400 mb-2">TIME</p>
-              <p className="text-sm font-bold text-pink-700 dark:text-pink-300">{slot.time_range}</p>
-            </div>
-          </div>
-          <div className="flex justify-center">
-            {getStatusBadge()}
-          </div>
+        <div>
+          {getStatusBadge()}
         </div>
       </div>
     </div>

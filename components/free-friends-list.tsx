@@ -24,37 +24,39 @@ export function FreeFriendsList({ friends, isLoading = false, currentUserUid, cu
   const displayFriends = friends || []
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden">
-      <div className="p-6 border-b border-slate-200 dark:border-slate-800">
-        <h3 className="text-xl font-black text-slate-900 dark:text-white">Friends Free Right Now</h3>
+    <div className="bg-white dark:bg-[#0a0a0a] border-2 border-black dark:border-white p-1 h-full">
+      <div className="bg-[#8B5CF6] dark:bg-[#7c3aed] p-3 border-b-2 border-black dark:border-white mb-1">
+        <h3 className="text-white font-black uppercase tracking-wider text-sm flex items-center gap-2">
+          <span>👥</span> Friends Free Now
+        </h3>
       </div>
-      <div className="p-6">
+      
+      <div className="p-4 bg-gray-50 dark:bg-zinc-900 min-h-[200px]">
         {isLoading ? (
           <div className="space-y-3">
             {[1, 2, 3].map(i => (
-              <div key={i} className="h-16 bg-slate-100 dark:bg-slate-800 rounded-xl animate-pulse" />
+              <div key={i} className="h-16 bg-gray-200 dark:bg-zinc-800 animate-pulse border-2 border-dashed border-gray-300 dark:border-zinc-700" />
             ))}
           </div>
         ) : displayFriends.length > 0 ? (
           <div className="space-y-3">
             {displayFriends.map(friend => (
-              <div key={friend.id} className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border border-green-200 dark:border-green-800 hover:shadow-lg hover:shadow-green-500/20 transition-all duration-200">
+              <div key={friend.id} className="flex items-center justify-between p-3 bg-white dark:bg-black border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#fff] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_#fff] transition-all">
                 <div className="flex items-center gap-3">
                   <div className="relative">
-                    <Avatar className="h-12 w-12 ring-2 ring-green-500/30">
-                      <AvatarFallback className="bg-gradient-to-br from-green-500 to-emerald-500 text-white font-bold text-sm">
+                    <Avatar className="h-10 w-10 border-2 border-black dark:border-white rounded-none">
+                      <AvatarFallback className="bg-[#FEF08A] dark:bg-yellow-900 text-black dark:text-white font-black text-xs rounded-none">
                         {friend.name.split(' ')[0][0]}
                         {friend.name.split(' ')[1]?.[0] || ''}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-slate-900"></div>
                   </div>
-                  <div className="flex-1">
-                    <p className="font-bold text-sm text-slate-900 dark:text-white">{friend.name}</p>
-                    <p className="text-xs text-slate-600 dark:text-slate-400">{friend.uid}</p>
+                  <div>
+                    <p className="font-bold text-sm uppercase text-black dark:text-white truncate max-w-[120px]">{friend.name}</p>
+                    <p className="text-[10px] font-mono text-gray-500">{friend.uid}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   {currentUserUid && currentUserName && (
                     <MessageDialog
                       friendName={friend.name}
@@ -63,21 +65,20 @@ export function FreeFriendsList({ friends, isLoading = false, currentUserUid, cu
                       currentUserName={currentUserName}
                     />
                   )}
-                  <div className="px-3 py-1.5 rounded-full bg-green-500 shadow-lg shadow-green-500/40 flex items-center gap-1.5">
-                    <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                    <span className="text-white font-bold text-xs">FREE</span>
+                  <div className="hidden sm:block px-2 py-1 bg-[#4ADE80] border-2 border-black dark:border-white text-black font-black text-[10px] uppercase tracking-wider">
+                    FREE
                   </div>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center mx-auto mb-4">
-              <span className="text-3xl">😴</span>
+          <div className="h-full flex flex-col items-center justify-center py-12 text-center">
+            <div className="w-16 h-16 bg-white dark:bg-black border-2 border-black dark:border-white flex items-center justify-center mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#fff]">
+              <span className="text-3xl text-gray-400">∅</span>
             </div>
-            <p className="text-sm font-semibold text-slate-900 dark:text-white mb-1">No friends free right now</p>
-            <p className="text-xs text-slate-600 dark:text-slate-400">Check back during the next break!</p>
+            <p className="font-black uppercase text-black dark:text-white mb-1">No One is Free</p>
+            <p className="text-xs font-mono text-gray-500">Everyone is busy attending classes.</p>
           </div>
         )}
       </div>

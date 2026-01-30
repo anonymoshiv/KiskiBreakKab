@@ -5,10 +5,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { Badge } from '@/components/ui/badge'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import { 
@@ -23,7 +21,7 @@ import {
   FriendRequest
 } from '@/lib/friends'
 import { toast } from 'sonner'
-import { UserPlus, UserMinus, Check, X, ArrowLeft } from 'lucide-react'
+import { UserPlus, UserMinus, Check, X, ArrowLeft, Users, User, Share2 } from 'lucide-react'
 
 export default function FriendsPage() {
   const router = useRouter()
@@ -35,13 +33,11 @@ export default function FriendsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Check authentication and load data
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
         router.push('/login')
       } else {
-        // Find user's college UID from Firestore
         const { collection, query, where, getDocs } = await import('firebase/firestore')
         const { db } = await import('@/lib/firebase')
         
@@ -91,11 +87,11 @@ export default function FriendsPage() {
     setIsSubmitting(true)
     try {
       await sendFriendRequest(currentUserUid, searchUid.toLowerCase())
-      toast.success('Friend request sent!')
+      toast.success('Request transmitted')
       setSearchUid('')
       await loadFriendsData(currentUserUid)
     } catch (error: any) {
-      toast.error(error.message || 'Failed to send friend request')
+      toast.error(error.message || 'Transmission failed')
     } finally {
       setIsSubmitting(false)
     }
@@ -103,248 +99,192 @@ export default function FriendsPage() {
 
   const handleAcceptRequest = async (requestId: string) => {
     try {
-      await acceptFriendRequest(requestId, currentUserUid)
-      toast.success('Friend request accepted!')
+      await acceptFriendRequest(requestId)
+      toast.success('Connection established')
       await loadFriendsData(currentUserUid)
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to accept request')
+    } catch (error) {
+      toast.error('Failed to establish connection')
     }
   }
 
   const handleRejectRequest = async (requestId: string) => {
     try {
       await rejectFriendRequest(requestId)
-      toast.success('Friend request rejected')
+      toast.success('Request declined')
       await loadFriendsData(currentUserUid)
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to reject request')
+    } catch (error) {
+      toast.error('Operation failed')
     }
   }
 
-  const handleRemoveFriend = async (friendUid: string, friendName: string) => {
-    if (!confirm(`Remove ${friendName} from your friends?`)) return
-
-    try {
-      await removeFriend(currentUserUid, friendUid)
-      toast.success('Friend removed')
-      await loadFriendsData(currentUserUid)
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to remove friend')
+  const handleRemoveFriend = async (friendUid: string) => {
+    if (confirm('Are you sure you want to terminate this connection?')) {
+      try {
+        await removeFriend(currentUserUid, friendUid)
+        toast.success('Connection terminated')
+        await loadFriendsData(currentUserUid)
+      } catch (error) {
+        toast.error('Failed to remove friend')
+      }
     }
   }
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-muted-foreground">Loading...</p>
+      <div className="min-h-screen bg-white dark:bg-black flex items-center justify-center">
+        <div className="flex flex-col items-center">
+             <div className="w-16 h-16 border-4 border-black dark:border-white border-t-transparent rounded-full animate-spin mb-4"></div>
+             <p className="font-black uppercase tracking-widest text-xl">Loading Network...</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black p-3 sm:p-4">
-      <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0a] p-4 sm:p-8 font-sans">
+      <div className="max-w-7xl mx-auto space-y-8">
+        
         {/* Header */}
-        <div className="space-y-3">
-          <div className="flex justify-between items-start">
-            <Link href="/dashboard">
-              <Button variant="ghost" size="sm" className="mb-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl text-xs sm:text-sm">
-                <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Back to Dashboard</span>
-                <span className="sm:hidden">Back</span>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b-4 border-black dark:border-white pb-6">
+          <div className="space-y-2">
+            <Link href="/dashboard" className="inline-block">
+              <Button variant="ghost" size="sm" className="mb-2 -ml-2 rounded-none hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black font-bold uppercase transition-all">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Return to Dashboard
               </Button>
             </Link>
-            <ThemeToggle />
+            <h1 className="text-4xl sm:text-5xl font-black uppercase tracking-tighter flex items-center gap-3">
+               <Users className="h-8 w-8 sm:h-12 sm:w-12" strokeWidth={2.5} />
+               Friend<span className="text-[#8B5CF6]">Zone</span>
+            </h1>
+            <p className="font-mono text-sm font-bold opacity-60">
+               MANAGE SOCIAL CONNECTIONS AND NETWORK REQUESTS.
+            </p>
           </div>
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-[#F63049] flex items-center justify-center shadow-lg">
-              <UserPlus className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-black dark:text-white">
-                Friends
-              </h1>
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                Connect and see who's free during breaks
-              </p>
-            </div>
-          </div>
-        </div>
-        {/* Add Friend Card */}
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-xl overflow-hidden">
-          <div className="bg-[#F63049] p-6">
-            <h3 className="text-xl font-black text-white mb-1">Add New Friend</h3>
-            <p className="text-blue-100 text-sm">Search by college UID (e.g., 23bcs12345)</p>
-          </div>
-          <div className="p-6 space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="uid" className="font-semibold text-gray-700 dark:text-gray-300">Friend's College UID</Label>
-              <Input
-                id="uid"
-                placeholder="e.g., 23bcs12345"
-                value={searchUid}
-                onChange={e => setSearchUid(e.target.value.toLowerCase())}
-                className="h-12 rounded-xl border-gray-300 dark:border-gray-700 focus:border-[#F63049] dark:focus:border-[#F63049]"
-              />
-            </div>
-            <Button 
-              onClick={handleSendRequest} 
-              disabled={isSubmitting || !searchUid.trim()} 
-              className="w-full h-12 rounded-xl bg-[#F63049] hover:bg-[#F63049]/90 font-bold shadow-lg transition-all duration-300"
-            >
-              <UserPlus className="mr-2 h-5 w-5" />
-              {isSubmitting ? 'Sending...' : 'Send Friend Request'}
-            </Button>
-          </div>
+          <ThemeToggle />
         </div>
 
-        {/* Pending Requests (Received) */}
-        {pendingRequests.length > 0 && (
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-[#F63049]/30 dark:border-[#F63049]/50 shadow-xl overflow-hidden">
-            <div className="bg-[#F63049] p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-xl font-black text-white mb-1">Pending Requests</h3>
-                  <p className="text-purple-100 text-sm">People who want to be your friend</p>
-                </div>
-                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                  <span className="text-white font-black text-lg">{pendingRequests.length}</span>
-                </div>
-              </div>
-            </div>
-            <div className="p-6">
-              <div className="space-y-3">
-                {pendingRequests.map(request => (
-                  <div key={request.id} className="flex items-center justify-between p-4 rounded-xl bg-[#F63049]/10 dark:bg-[#F63049]/20 border border-[#F63049]/30 dark:border-[#F63049]/50 hover:shadow-lg transition-all duration-300">
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-12 w-12">
-                        <AvatarFallback className="bg-[#F63049] text-white font-bold text-lg">
-                          {request.fromName.charAt(0).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <p className="font-bold text-black dark:text-white">{request.fromName}</p>
-                        <p className="text-xs text-[#F63049] dark:text-[#F63049] font-medium">{request.from}</p>
-                      </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+           
+           {/* Sidebar: Add Friend & Pending */}
+           <div className="space-y-8">
+              
+              {/* Add Friend Widget */}
+              <div className="bg-white dark:bg-black border-2 border-black dark:border-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#fff]">
+                 <div className="bg-[#8B5CF6] p-4 border-b-2 border-black dark:border-white">
+                    <h2 className="text-white font-black uppercase tracking-wider flex items-center gap-2">
+                       <UserPlus className="h-5 w-5" /> Add Connection
+                    </h2>
+                 </div>
+                 <div className="p-6 space-y-4">
+                    <div className="space-y-2">
+                       <label className="text-xs font-bold uppercase">Enter User ID</label>
+                       <div className="flex gap-2">
+                          <Input 
+                             value={searchUid}
+                             onChange={(e) => setSearchUid(e.target.value)}
+                             placeholder="e.g. 22BCS12345"
+                             className="rounded-none border-2 border-black dark:border-white focus-visible:ring-0 font-mono uppercase"
+                          />
+                       </div>
                     </div>
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        onClick={() => handleAcceptRequest(request.id)}
-                        className="h-9 rounded-xl bg-[#F63049] hover:bg-[#F63049]/90 font-bold shadow-lg"
-                      >
-                        <Check className="h-4 w-4 mr-1" />
-                        Accept
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleRejectRequest(request.id)}
-                        className="h-9 rounded-xl border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-bold"
-                      >
-                        <X className="h-4 w-4 mr-1" />
-                        Reject
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Sent Requests */}
-        {sentRequests.length > 0 && (
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-[#F63049]/30 dark:border-[#F63049]/50 shadow-xl overflow-hidden">
-            <div className="bg-[#F63049] p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-xl font-black text-white mb-1">Sent Requests</h3>
-                  <p className="text-amber-100 text-sm">Waiting for response</p>
-                </div>
-                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                  <span className="text-white font-black text-lg">{sentRequests.length}</span>
-                </div>
-              </div>
-            </div>
-            <div className="p-6">
-              <div className="space-y-3">
-                {sentRequests.map(request => (
-                  <div key={request.id} className="flex items-center justify-between p-4 rounded-xl bg-[#F63049]/10 dark:bg-[#F63049]/20 border border-[#F63049]/30 dark:border-[#F63049]/50">
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-12 w-12">
-                        <AvatarFallback className="bg-[#F63049] text-white font-bold text-lg">
-                          ?
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <p className="font-bold text-black dark:text-white">{request.to}</p>
-                        <p className="text-xs text-[#F63049] dark:text-[#F63049] font-medium">Pending...</p>
-                      </div>
-                    </div>
-                    <div className="px-4 py-2 rounded-full bg-[#F63049]/20 dark:bg-[#F63049]/30 border border-[#F63049]/50">
-                      <span className="text-xs font-bold text-[#F63049] dark:text-white">⏳ Pending</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Friends List */}
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-xl overflow-hidden">
-          <div className="bg-[#F63049] p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-black text-white mb-1">My Friends</h3>
-                <p className="text-white/90 text-sm">Your accepted connections</p>
-              </div>
-              <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
-                <span className="text-white font-black text-xl">{friends.length}</span>
-              </div>
-            </div>
-          </div>
-          <div className="p-6">
-            {friends.length > 0 ? (
-              <div className="space-y-3">
-                {friends.map(friend => (
-                  <div key={friend.uid} className="flex items-center justify-between p-4 rounded-xl bg-[#F63049]/10 dark:bg-[#F63049]/20 border border-[#F63049]/30 dark:border-[#F63049]/50 hover:shadow-lg transition-all duration-300 group">
-                    <div className="flex items-center gap-3">
-                      <div className="relative">
-                        <Avatar className="h-12 w-12">
-                          <AvatarFallback className="bg-[#F63049] text-white font-bold text-lg">
-                            {friend.name.charAt(0).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-[#F63049] rounded-full border-2 border-white dark:border-gray-900"></div>
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-bold text-black dark:text-white">{friend.name}</p>
-                        <p className="text-xs text-[#F63049] dark:text-[#F63049] font-medium">{friend.uid}</p>
-                      </div>
-                    </div>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleRemoveFriend(friend.uid, friend.name)}
-                      className="rounded-xl text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-100 dark:hover:bg-red-950/30 opacity-0 group-hover:opacity-100 transition-opacity"
+                    <Button 
+                       onClick={handleSendRequest}
+                       disabled={isSubmitting || !searchUid}
+                       className="w-full rounded-none bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 border-2 border-transparent font-bold uppercase shadow-none hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[4px_4px_0px_0px_#fff] transition-all"
                     >
-                      <UserMinus className="h-4 w-4" />
+                       {isSubmitting ? 'Transmitting...' : 'Send Request'}
                     </Button>
-                  </div>
-                ))}
+                 </div>
               </div>
-            ) : (
-              <div className="text-center py-12">
-                <div className="w-20 h-20 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-4">
-                  <span className="text-4xl">👥</span>
-                </div>
-                <p className="text-lg font-bold text-black dark:text-white mb-1">No friends yet</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Add friends using their UID above!</p>
+
+              {/* Pending Requests */}
+              <div className="bg-white dark:bg-black border-2 border-black dark:border-white">
+                 <div className="bg-[#FEF08A] dark:bg-yellow-900 p-3 border-b-2 border-black dark:border-white">
+                    <h2 className="text-black dark:text-yellow-100 font-black uppercase tracking-wider text-sm flex items-center gap-2">
+                       <Share2 className="h-4 w-4" /> Incoming ({pendingRequests.length})
+                    </h2>
+                 </div>
+                 <div className="p-4 space-y-3 bg-gray-50 dark:bg-zinc-900 min-h-[100px]">
+                    {pendingRequests.length === 0 ? (
+                       <p className="text-xs font-mono text-gray-400 text-center py-4">NO PENDING REQUESTS</p>
+                    ) : (
+                       pendingRequests.map(req => (
+                          <div key={req.id} className="bg-white dark:bg-black border-2 border-black dark:border-white p-3 flex flex-col gap-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]">
+                             <div className="flex items-center gap-3">
+                                <Avatar className="h-8 w-8 rounded-none border-2 border-black dark:border-white">
+                                   <AvatarFallback className="rounded-none bg-black text-white font-bold">{req.fromName?.[0]}</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                   <p className="font-bold text-sm uppercase">{req.fromName}</p>
+                                   <p className="font-mono text-[10px] text-gray-500">{req.fromUid}</p>
+                                </div>
+                             </div>
+                             <div className="grid grid-cols-2 gap-2">
+                                <Button onClick={() => handleAcceptRequest(req.id)} size="sm" className="rounded-none bg-[#4ADE80] text-black border-2 border-black hover:bg-[#22c55e] font-bold uppercase text-[10px]">Accept</Button>
+                                <Button onClick={() => handleRejectRequest(req.id)} size="sm" className="rounded-none bg-[#F63049] text-white border-2 border-black hover:bg-[#ef4444] font-bold uppercase text-[10px]">Decline</Button>
+                             </div>
+                          </div>
+                       ))
+                    )}
+                 </div>
               </div>
-            )}
-          </div>
+
+           </div>
+
+           {/* Main: Friends List */}
+           <div className="lg:col-span-2">
+              <div className="bg-white dark:bg-black border-2 border-black dark:border-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#fff]">
+                 <div className="bg-black dark:bg-white p-4 border-b-2 border-black dark:border-white flex justify-between items-center">
+                    <h2 className="text-white dark:text-black font-black uppercase tracking-wider text-lg">
+                       Established Connections
+                    </h2>
+                    <span className="font-mono text-xs font-bold bg-white dark:bg-black text-black dark:text-white px-2 py-1 border border-transparent">
+                       TOTAL: {friends.length}
+                    </span>
+                 </div>
+                 
+                 <div className="p-6">
+                    {friends.length === 0 ? (
+                       <div className="text-center py-12 border-2 border-dashed border-gray-300 dark:border-zinc-700">
+                          <User className="h-12 w-12 mx-auto text-gray-300 mb-2" />
+                          <p className="font-black uppercase text-gray-400">No Connections Found</p>
+                          <p className="font-mono text-xs text-gray-400">Add friends via ID to begin.</p>
+                       </div>
+                    ) : (
+                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {friends.map(friend => (
+                             <div key={friend.uid} className="group relative bg-white dark:bg-zinc-900 border-2 border-black dark:border-white p-4 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors">
+                                <div className="flex items-start justify-between">
+                                   <div className="flex items-center gap-3">
+                                      <Avatar className="h-12 w-12 rounded-none border-2 border-black dark:border-white">
+                                         <AvatarFallback className="rounded-none bg-[#F63049] text-white font-black text-lg">
+                                            {friend.name[0]}
+                                         </AvatarFallback>
+                                      </Avatar>
+                                      <div>
+                                         <p className="font-black text-sm uppercase">{friend.name}</p>
+                                         <p className="font-mono text-xs text-gray-500">{friend.uid}</p>
+                                      </div>
+                                   </div>
+                                </div>
+                                <div className="mt-4 pt-4 border-t-2 border-black dark:border-white border-dashed flex justify-end">
+                                   <Button 
+                                      onClick={() => handleRemoveFriend(friend.uid)}
+                                      variant="ghost" 
+                                      className="h-8 text-red-500 hover:text-white hover:bg-red-500 font-bold uppercase text-[10px] rounded-none transition-colors"
+                                   >
+                                      <UserMinus className="h-3 w-3 mr-1" /> Terminate
+                                   </Button>
+                                </div>
+                             </div>
+                          ))}
+                       </div>
+                    )}
+                 </div>
+              </div>
+           </div>
+
         </div>
       </div>
     </div>
