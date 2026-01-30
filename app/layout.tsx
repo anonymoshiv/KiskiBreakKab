@@ -5,6 +5,8 @@ import { Analytics } from '@vercel/analytics/next'
 import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/components/theme-provider'
 import { AuthProvider } from '@/contexts/AuthContext'
+import { NotificationService } from '@/components/notification-service'
+import { ServiceWorkerRegistration } from '@/components/service-worker-registration'
 import './globals.css'
 
 const _geist = Geist({ subsets: ["latin"] });
@@ -88,6 +90,8 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
+            <ServiceWorkerRegistration />
+            <NotificationService />
             {children}
             <Toaster position="top-center" richColors />
             <Analytics />

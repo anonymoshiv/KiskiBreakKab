@@ -14,7 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { LogOut, Trash2, Bell, UserPlus, Users as UsersIcon, Calendar, Users, Target } from 'lucide-react'
 import { onAuthStateChanged, signOut, deleteUser } from 'firebase/auth'
-import { collection, query, where, getDocs, doc, getDoc, deleteDoc, writeBatch, onSnapshot, Unsubscribe } from 'firebase/firestore'
+import { collection, query, where, getDocs, doc, getDoc, deleteDoc, writeBatch } from 'firebase/firestore'
 import { auth, db } from '@/lib/firebase'
 import { toast } from 'sonner'
 import { acceptFriendRequest, rejectFriendRequest } from '@/lib/friends'
@@ -134,8 +134,6 @@ export default function DashboardPage() {
   }
 
   useEffect(() => {
-    let notificationUnsubscribe: Unsubscribe | null = null
-
     const authUnsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
         router.push('/login')
@@ -172,37 +170,8 @@ export default function DashboardPage() {
             await loadNotifications(userData.uid) // Initial load
 
             // Realtime listener
-             const friendRequestsQuery = query(
-              collection(db, 'friendRequests'),
-              where('to', '==', userData.uid),
-              where('status', '==', 'pending')
-            )
             
-            notificationUnsubscribe = onSnapshot(friendRequestsQuery, async (snapshot) => {
-              // Check for new requests (added documents)
-              snapshot.docChanges().forEach((change) => {
-                if (change.type === 'added') {
-                  const requestData = change.doc.data()
-                  
-                  // Show browser notification
-                  if ('Notification' in window && Notification.permission === 'granted') {
-                    new Notification('New Friend Request', {
-                      body: `${requestData.from} sent you a friend request`,
-                      icon: '/icon-192.svg',
-                      tag: 'friend-request',
-                      requireInteraction: true
-                    })
-                  }
-                  
-                  // Show toast as well
-                  toast.success('New Friend Request', {
-                    description: `${requestData.from} sent you a friend request`
-                  })
-                }
-              })
-              
-              await loadNotifications(userData.uid)
-            })
+            await loadNotifications(userData.uid)
           }
         } catch (error) {
           console.error('Error fetching user data:', error)
@@ -213,7 +182,6 @@ export default function DashboardPage() {
 
     return () => {
       authUnsubscribe()
-      if (notificationUnsubscribe) notificationUnsubscribe()
     }
   }, [router])
 

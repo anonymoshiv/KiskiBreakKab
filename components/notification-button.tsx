@@ -52,13 +52,18 @@ export function NotificationButton({ userUid }: NotificationButtonProps) {
       return
     }
 
-    toast.loading('Requesting permission...')
+    const loadingToast = toast.loading('Requesting permission...')
     
     const token = await requestNotificationPermission(userUid)
     
-    if (token) {
+    toast.dismiss(loadingToast)
+    
+    // Check the actual permission state after request
+    const currentPermission = Notification.permission
+    setPermission(currentPermission)
+    
+    if (token && currentPermission === 'granted') {
       setNotificationsEnabled(true)
-      setPermission('granted')
       toast.success('Notifications enabled!', {
         description: "You'll get alerts when friends are free"
       })
@@ -69,9 +74,13 @@ export function NotificationButton({ userUid }: NotificationButtonProps) {
           description: payload.notification?.body
         })
       })
+    } else if (currentPermission === 'denied') {
+      toast.error('Notifications blocked', {
+        description: 'Please allow notifications in your browser settings'
+      })
     } else {
       toast.error('Could not enable notifications', {
-        description: 'Please allow notifications in your browser settings and try again'
+        description: 'Permission was not granted'
       })
     }
   }
@@ -87,6 +96,8 @@ export function NotificationButton({ userUid }: NotificationButtonProps) {
       })
       
       setNotificationsEnabled(false)
+      // Update permission state
+      setPermission(Notification.permission)
       toast.info('Notifications disabled', {
         description: 'You can re-enable them anytime'
       })
