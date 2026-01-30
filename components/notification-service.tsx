@@ -103,17 +103,26 @@ export function NotificationService() {
             console.log('🔔 Notification permission:', Notification.permission)
             
             if (Notification.permission === 'granted') {
-              console.log('✅ Showing browser notification')
-              new Notification('New Friend Request!', {
+              console.log('✅ Creating Windows notification bar notification')
+              const notification = new Notification('New Friend Request!', {
                 body: `${request.fromName} wants to be your friend`,
                 icon: '/icon-192.svg',
                 badge: '/icon-192.svg',
                 tag: 'friend-request',
                 vibrate: [200, 100, 200],
-                requireInteraction: true
+                requireInteraction: true,
+                silent: false
               })
+              
+              notification.onclick = () => {
+                window.focus()
+                notification.close()
+              }
+              
+              console.log('✅ Notification created and should appear in Windows notification center')
             } else {
               console.log('❌ Browser notification not shown. Permission:', Notification.permission)
+              console.log('👉 Click the bell icon and allow notifications!')
             }
           }
         }

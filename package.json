@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "prebuild": "node scripts/generate-sw.js",
     "build": "next build",
+    "predev": "node scripts/generate-sw.js",
     "dev": "next dev",
     "lint": "eslint .",
     "start": "next start"

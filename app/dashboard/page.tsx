@@ -14,7 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { LogOut, Trash2, Bell, UserPlus, Users as UsersIcon, Calendar, Users, Target } from 'lucide-react'
 import { onAuthStateChanged, signOut, deleteUser } from 'firebase/auth'
-import { collection, query, where, getDocs, doc, getDoc, deleteDoc, writeBatch } from 'firebase/firestore'
+import { collection, query, where, getDocs, doc, getDoc, deleteDoc, writeBatch, onSnapshot } from 'firebase/firestore'
 import { auth, db } from '@/lib/firebase'
 import { toast } from 'sonner'
 import { acceptFriendRequest, rejectFriendRequest } from '@/lib/friends'
@@ -134,6 +134,8 @@ export default function DashboardPage() {
   }
 
   useEffect(() => {
+    let notificationUnsubscribe: (() => void) | null = null
+
     const authUnsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
         router.push('/login')
@@ -167,11 +169,25 @@ export default function DashboardPage() {
             }
             
             await loadFreeFriends(userData.uid)
-            await loadNotifications(userData.uid) // Initial load
 
-            // Realtime listener
+            // Set up REAL-TIME listener for notifications
+            const notificationsQuery = query(
+              collection(db, 'friendRequests'),
+              where('to', '==', userData.uid),
+              where('status', '==', 'pending')
+            )
             
-            await loadNotifications(userData.uid)
+            notificationUnsubscribe = onSnapshot(notificationsQuery, (snapshot) => {
+              const reqs = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+                type: 'friend_request',
+                message: 'Sent you a friend request'
+              }))
+              setNotifications(reqs)
+              setNotificationCount(reqs.length)
+              console.log('📬 Notification list updated in real-time:', reqs.length, 'pending requests')
+            })
           }
         } catch (error) {
           console.error('Error fetching user data:', error)
@@ -182,6 +198,7 @@ export default function DashboardPage() {
 
     return () => {
       authUnsubscribe()
+      if (notificationUnsubscribe) notificationUnsubscribe()
     }
   }, [router])
 

@@ -4,12 +4,12 @@ importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-comp
 
 // Initialize Firebase in the service worker
 firebase.initializeApp({
-  apiKey: "AIzaSyBEMCjcGso_k-Sav0aiBZTFrnDjgtftdos",
-  authDomain: "kiskibreakkab.firebaseapp.com",
-  projectId: "kiskibreakkab",
-  storageBucket: "kiskibreakkab.firebasestorage.app",
-  messagingSenderId: "21007194148",
-  appId: "1:21007194148:web:5149c70e8b2f802b7c20b1"
+  apiKey: "undefined",
+  authDomain: "undefined",
+  projectId: "undefined",
+  storageBucket: "undefined",
+  messagingSenderId: "undefined",
+  appId: "undefined"
 });
 
 const messaging = firebase.messaging();
