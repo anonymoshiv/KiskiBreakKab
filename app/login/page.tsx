@@ -144,7 +144,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-white dark:bg-[#0a0a0a] font-sans selection:bg-[#F63049] selection:text-white">
       {/* Grid Background */}
-      <div className="fixed inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
+      <div className="fixed inset-0 bg-[linear-gradient(to_right,#80808040_1px,transparent_1px),linear-gradient(to_bottom,#80808040_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
 
       <div className="grid lg:grid-cols-2 min-h-screen relative z-10">
         
@@ -190,7 +190,7 @@ export default function LoginPage() {
                <ThemeToggle />
             </div>
 
-            <div className="bg-white dark:bg-zinc-900 border-2 border-black dark:border-zinc-700 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] p-8 relative">
+            <div className="bg-white dark:bg-zinc-900 border-2 border-black dark:border-zinc-700 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#404040] p-8 relative">
               
               <div className="absolute -top-3 -right-3 bg-[#F63049] text-white text-xs font-bold px-3 py-1 border-2 border-black transform rotate-2">
                 SECURE ACCESS

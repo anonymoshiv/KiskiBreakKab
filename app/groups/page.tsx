@@ -264,7 +264,7 @@ export default function GroupsPage() {
            
            {/* Left Panel: Create Group */}
            <div className="space-y-6">
-              <div className="bg-white dark:bg-black border-2 border-black dark:border-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#fff]">
+              <div className="bg-white dark:bg-black border-2 border-black dark:border-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#404040]">
                  <div className="bg-[#F63049] p-4 border-b-2 border-black dark:border-white text-white">
                     <h2 className="font-black uppercase tracking-widest flex items-center gap-2">
                        <Plus className="h-5 w-5" /> Mobilize Squad

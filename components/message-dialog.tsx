@@ -58,14 +58,14 @@ export function MessageDialog({ friendName, friendUid, currentUserUid, currentUs
       <Button
         onClick={() => setOpen(true)}
         size="sm"
-        className="h-8 px-3 rounded-none bg-[#F63049] hover:bg-[#d42a3f] text-white font-black text-xs border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_#fff] uppercase tracking-wider hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all"
+        className="h-8 px-3 rounded-none bg-[#F63049] hover:bg-[#d42a3f] text-white font-black text-xs border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_#404040] uppercase tracking-wider hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all"
       >
         <MessageCircle className="h-3.5 w-3.5 mr-1.5" />
         MSG
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-md bg-white dark:bg-black p-0 border-2 border-black dark:border-white rounded-none shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#fff]">
+        <DialogContent className="sm:max-w-md bg-white dark:bg-black p-0 border-2 border-black dark:border-white rounded-none shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#404040]">
           <DialogHeader className="p-4 border-b-2 border-black dark:border-white bg-[#FEF08A] dark:bg-yellow-900">
             <DialogTitle className="text-xl font-black text-black dark:text-white uppercase tracking-wider">
               Message {friendName}
@@ -109,7 +109,7 @@ export function MessageDialog({ friendName, friendUid, currentUserUid, currentUs
               type="button"
               onClick={handleSendMessage}
               disabled={isSending || !message.trim()}
-              className="rounded-none bg-[#F63049] hover:bg-[#d42a3f] text-white font-bold uppercase border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#fff] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_#fff] transition-all"
+              className="rounded-none bg-[#F63049] hover:bg-[#d42a3f] text-white font-bold uppercase border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#404040] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_#404040] transition-all"
             >
               {isSending ? (
                 'Sending...'

@@ -37,13 +37,13 @@ export default function HomePage() {
     <div className="min-h-screen bg-white dark:bg-[#0a0a0a] text-black dark:text-white selection:bg-[#F63049] selection:text-white font-sans overflow-x-hidden">
       
       {/* Grid Pattern Background */}
-      <div className="fixed inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
+      <div className="fixed inset-0 bg-[linear-gradient(to_right,#80808040_1px,transparent_1px),linear-gradient(to_bottom,#80808040_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
 
       {/* Navbar */}
       <nav className="fixed top-0 w-full z-50 bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md border-b-2 border-black dark:border-white/20">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#F63049] flex items-center justify-center border-2 border-black dark:border-transparent transform hover:rotate-12 transition-transform duration-300 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-none">
+            <div className="w-10 h-10 bg-[#F63049] flex items-center justify-center border-2 border-black dark:border-transparent transform hover:rotate-12 transition-transform duration-300 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_#404040]">
               <span className="text-white font-black text-xl select-none">K</span>
             </div>
             <span className="font-bold text-2xl tracking-tighter hidden sm:block select-none">
@@ -96,7 +96,7 @@ export default function HomePage() {
 
               <div className="flex flex-col sm:flex-row gap-5 pt-6">
                 <Link href="/register" className="group">
-                  <div className="bg-[#F63049] text-white px-10 py-5 font-black text-lg border-2 border-black dark:border-white flex items-center gap-3 shadow-[6px_6px_0px_0px_#000] dark:shadow-[6px_6px_0px_0px_#fff] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] dark:hover:shadow-[2px_2px_0px_0px_#fff] transition-all active:translate-x-[6px] active:translate-y-[6px] active:shadow-none">
+                  <div className="bg-[#F63049] text-white px-10 py-5 font-black text-lg border-2 border-black dark:border-white flex items-center gap-3 shadow-[6px_6px_0px_0px_#000] dark:shadow-[6px_6px_0px_0px_#404040] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] dark:hover:shadow-[2px_2px_0px_0px_#404040] transition-all active:translate-x-[6px] active:translate-y-[6px] active:shadow-none">
                     GET STARTED <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" strokeWidth={3} />
                   </div>
                 </Link>
@@ -114,7 +114,7 @@ export default function HomePage() {
                <div className="absolute right-10 top-10 w-64 h-80 border-4 border-dashed border-gray-300 dark:border-zinc-700 rounded-3xl transform rotate-6"></div>
 
                {/* Card 1: Status */}
-               <div className="absolute right-20 top-20 w-72 bg-white dark:bg-zinc-900 border-2 border-black dark:border-white p-5 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] transform -rotate-3 hover:rotate-0 hover:z-20 hover:scale-105 transition-all duration-300 z-10">
+               <div className="absolute right-20 top-20 w-72 bg-white dark:bg-zinc-900 border-2 border-black dark:border-white p-5 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#404040] transform -rotate-3 hover:rotate-0 hover:z-20 hover:scale-105 transition-all duration-300 z-10">
                   <div className="flex justify-between items-center mb-4">
                     <div className="w-10 h-10 bg-gray-200 dark:bg-zinc-700 rounded-full animate-pulse"></div>
                     <span className="px-2 py-1 bg-[#F63049] text-white text-xs font-bold font-mono">BUSY</span>
@@ -128,7 +128,7 @@ export default function HomePage() {
                </div>
 
                {/* Card 2: Free */}
-               <div className="absolute right-0 top-60 w-80 bg-[#F63049] text-white border-2 border-black dark:border-white p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] transform rotate-3 hover:rotate-0 hover:z-20 hover:scale-105 transition-all duration-300 z-20">
+               <div className="absolute right-0 top-60 w-80 bg-[#F63049] text-white border-2 border-black dark:border-white p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#404040] transform rotate-3 hover:rotate-0 hover:z-20 hover:scale-105 transition-all duration-300 z-20">
                   <div className="flex justify-between items-center mb-4">
                     <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center font-bold text-2xl">😎</div>
                     <span className="px-3 py-1 bg-white text-[#F63049] text-xs font-black font-mono border border-black">FREE RN</span>

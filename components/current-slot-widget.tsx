@@ -120,11 +120,11 @@ export function CurrentSlotWidget({ timetable }: CurrentSlotWidgetProps) {
   const getStatusBadge = () => {
     if (slot.status === 'in-progress' && slot.userStatus) {
       if (slot.userStatus === 'FREE') {
-        return <div className="w-full text-center px-4 py-3 bg-white border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#fff]">
+        return <div className="w-full text-center px-4 py-3 bg-white border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#404040]">
           <span className="text-black font-black uppercase tracking-widest text-lg">You Are Free</span>
         </div>
       } else {
-        return <div className="w-full text-center px-4 py-3 bg-[#F63049] text-white border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#fff]">
+        return <div className="w-full text-center px-4 py-3 bg-[#F63049] text-white border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#404040]">
           <span className="font-black uppercase tracking-widest text-lg">In Class</span>
         </div>
       }
@@ -136,11 +136,11 @@ export function CurrentSlotWidget({ timetable }: CurrentSlotWidgetProps) {
           <span className="font-bold uppercase tracking-widest text-sm text-gray-500">No Data Available</span>
         </div>
       case 'break':
-        return <div className="w-full text-center px-4 py-3 bg-yellow-400 text-black border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#fff]">
+        return <div className="w-full text-center px-4 py-3 bg-yellow-400 text-black border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#404040]">
           <span className="font-black uppercase tracking-widest text-lg">Break Time</span>
         </div>
       case 'weekend':
-        return <div className="w-full text-center px-4 py-3 bg-purple-500 text-white border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#fff]">
+        return <div className="w-full text-center px-4 py-3 bg-purple-500 text-white border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#404040]">
           <span className="font-black uppercase tracking-widest text-lg">Weekend</span>
         </div>
       case 'after-hours':

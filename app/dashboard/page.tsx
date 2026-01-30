@@ -198,7 +198,7 @@ export default function DashboardPage() {
     return (
        <div className="min-h-screen flex items-center justify-center bg-white dark:bg-[#0a0a0a]">
         <div className="text-center">
-          <div className="w-16 h-16 bg-[#F63049] flex items-center justify-center mx-auto mb-4 animate-pulse border-4 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#fff]">
+          <div className="w-16 h-16 bg-[#F63049] flex items-center justify-center mx-auto mb-4 animate-pulse border-4 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#404040]">
             <span className="text-white text-2xl font-black font-mono">K</span>
           </div>
           <p className="text-black dark:text-white font-mono uppercase tracking-widest text-sm font-bold">Initializing System...</p>
@@ -211,13 +211,13 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-white dark:bg-[#0a0a0a] text-black dark:text-white font-sans selection:bg-[#F63049] selection:text-white">
       
       {/* Grid Pattern Background */}
-      <div className="fixed inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
+      <div className="fixed inset-0 bg-[linear-gradient(to_right,#80808040_1px,transparent_1px),linear-gradient(to_bottom,#80808040_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
 
       {/* Header */}
       <nav className="fixed top-0 w-full z-50 bg-white/80 dark:bg-[#0a0a0a]/90 backdrop-blur-md border-b-2 border-black dark:border-white/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
-             <div className="w-10 h-10 bg-[#F63049] flex items-center justify-center border-2 border-black dark:border-transparent transform hover:rotate-6 transition-transform duration-300 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-none">
+             <div className="w-10 h-10 bg-[#F63049] flex items-center justify-center border-2 border-black dark:border-transparent transform hover:rotate-6 transition-transform duration-300 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_#404040]">
                 <span className="text-white font-black text-xl select-none">K</span>
              </div>
              <span className="font-black text-xl tracking-tighter hidden sm:block uppercase">
@@ -242,7 +242,7 @@ export default function DashboardPage() {
                   )}
                 </button>
               </PopoverTrigger>
-              <PopoverContent align="end" className="w-80 sm:w-96 p-0 border-4 border-black dark:border-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#fff] rounded-none bg-white dark:bg-[#0a0a0a]">
+              <PopoverContent align="end" className="w-80 sm:w-96 p-0 border-4 border-black dark:border-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#404040] rounded-none bg-white dark:bg-[#0a0a0a]">
                 <div className="bg-black text-white p-4 border-b-4 border-black dark:border-white">
                   <h3 className="font-black uppercase tracking-wider">Notifications</h3>
                   <p className="font-mono text-xs text-[#F63049]">{notificationCount} PENDING</p>
@@ -286,7 +286,7 @@ export default function DashboardPage() {
                   </div>
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 border-4 border-black dark:border-white rounded-none shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#fff] bg-white dark:bg-[#0a0a0a]">
+              <DropdownMenuContent align="end" className="w-56 border-4 border-black dark:border-white rounded-none shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#404040] bg-white dark:bg-[#0a0a0a]">
                 <DropdownMenuLabel className="p-4">
                   <div className="flex flex-col space-y-1">
                     <p className="font-black uppercase tracking-tight">{userName}</p>
@@ -312,7 +312,7 @@ export default function DashboardPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-32 pb-20 relative z-10 space-y-8">
         
         {/* Welcome Section */}
-        <div className="bg-[#F63049] border-4 border-black dark:border-white p-6 sm:p-10 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#fff] text-white overflow-hidden relative group">
+        <div className="bg-[#F63049] border-4 border-black dark:border-white p-6 sm:p-10 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#404040] text-white overflow-hidden relative group">
            <div className="relative z-10">
              <h2 className="text-4xl sm:text-6xl font-black uppercase tracking-tighter mb-2">
                Welcome Back, <br className="sm:hidden" /> {userName.split(' ')[0]}!

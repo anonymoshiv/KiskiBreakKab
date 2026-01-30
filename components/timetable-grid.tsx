@@ -62,7 +62,7 @@ export function TimetableGrid({ onSave, isLoading = false, initialTimetable }: T
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-white dark:bg-black p-4 border-2 border-black dark:border-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#fff]">
+      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-white dark:bg-black p-4 border-2 border-black dark:border-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#404040]">
          <div>
             <h2 className="text-xl font-black uppercase">Weekly Configuration</h2>
             <p className="font-mono text-xs text-gray-500">Tap slots to toggle status.</p>
@@ -129,7 +129,7 @@ export function TimetableGrid({ onSave, isLoading = false, initialTimetable }: T
         </div>
       </div>
 
-      <div className="flex justify-end p-4 border-2 border-black dark:border-white bg-[#FEF08A] dark:bg-yellow-900 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#fff]">
+      <div className="flex justify-end p-4 border-2 border-black dark:border-white bg-[#FEF08A] dark:bg-yellow-900 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#404040]">
         <Button 
           onClick={handleSave} 
           disabled={isLoading}

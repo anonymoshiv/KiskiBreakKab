@@ -41,7 +41,7 @@ export function FreeFriendsList({ friends, isLoading = false, currentUserUid, cu
         ) : displayFriends.length > 0 ? (
           <div className="space-y-3">
             {displayFriends.map(friend => (
-              <div key={friend.id} className="flex items-center justify-between p-3 bg-white dark:bg-black border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#fff] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_#fff] transition-all">
+              <div key={friend.id} className="flex items-center justify-between p-3 bg-white dark:bg-black border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#404040] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_#404040] transition-all">
                 <div className="flex items-center gap-3">
                   <div className="relative">
                     <Avatar className="h-10 w-10 border-2 border-black dark:border-white rounded-none">
@@ -74,7 +74,7 @@ export function FreeFriendsList({ friends, isLoading = false, currentUserUid, cu
           </div>
         ) : (
           <div className="h-full flex flex-col items-center justify-center py-12 text-center">
-            <div className="w-16 h-16 bg-white dark:bg-black border-2 border-black dark:border-white flex items-center justify-center mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#fff]">
+            <div className="w-16 h-16 bg-white dark:bg-black border-2 border-black dark:border-white flex items-center justify-center mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#404040]">
               <span className="text-3xl text-gray-400">∅</span>
             </div>
             <p className="font-black uppercase text-black dark:text-white mb-1">No One is Free</p>

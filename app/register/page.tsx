@@ -121,7 +121,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-white dark:bg-[#0a0a0a] font-sans selection:bg-[#F63049] selection:text-white">
       {/* Grid Background */}
-      <div className="fixed inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
+      <div className="fixed inset-0 bg-[linear-gradient(to_right,#80808040_1px,transparent_1px),linear-gradient(to_bottom,#80808040_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
 
       <div className="grid lg:grid-cols-2 min-h-screen relative z-10">
         

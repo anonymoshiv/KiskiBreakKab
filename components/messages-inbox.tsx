@@ -116,7 +116,7 @@ export function MessagesInbox({ userUid, trigger }: MessagesInboxProps) {
       ) : (
         <button
           onClick={() => setOpen(true)}
-          className="relative inline-flex items-center justify-center p-3 bg-white dark:bg-zinc-900 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#fff] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_#fff] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all"
+          className="relative inline-flex items-center justify-center p-3 bg-white dark:bg-zinc-900 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#404040] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_#404040] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all"
         >
           <MessageCircle className="h-6 w-6 text-black dark:text-white" />
           {unreadCount > 0 && (
@@ -128,7 +128,7 @@ export function MessagesInbox({ userUid, trigger }: MessagesInboxProps) {
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-xl bg-white dark:bg-black p-0 border-2 border-black dark:border-white rounded-none shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#fff]">
+        <DialogContent className="sm:max-w-xl bg-white dark:bg-black p-0 border-2 border-black dark:border-white rounded-none shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#404040]">
           <DialogHeader className="p-4 border-b-2 border-black dark:border-white bg-[#8B5CF6] dark:bg-violet-900">
             <DialogTitle className="text-2xl font-black text-white uppercase tracking-wider flex items-center gap-2">
               <MessageCircle className="h-6 w-6" />
@@ -185,7 +185,7 @@ export function MessagesInbox({ userUid, trigger }: MessagesInboxProps) {
               ))
             ) : (
               <div className="text-center py-12 flex flex-col items-center">
-                <div className="w-16 h-16 border-2 border-black dark:border-white bg-white dark:bg-black flex items-center justify-center mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#fff]">
+                <div className="w-16 h-16 border-2 border-black dark:border-white bg-white dark:bg-black flex items-center justify-center mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#404040]">
                   <MessageCircle className="h-8 w-8 text-gray-400" />
                 </div>
                 <p className="font-black uppercase text-lg">No New Messages</p>

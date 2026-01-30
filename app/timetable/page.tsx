@@ -108,7 +108,7 @@ export default function TimetablePage() {
         </div>
 
         {/* Content */}
-        <div className="bg-white dark:bg-black p-1 sm:p-2 border-2 border-black dark:border-white shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] dark:shadow-[12px_12px_0px_0px_#fff]">
+        <div className="bg-white dark:bg-black p-1 sm:p-2 border-2 border-black dark:border-white shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] dark:shadow-[12px_12px_0px_0px_#404040]">
            <TimetableGrid 
              onSave={handleSaveTimetable}
              isLoading={isSaving}
